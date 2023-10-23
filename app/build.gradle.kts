@@ -41,6 +41,12 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = AppConfig.compose
     }
+    kotlinOptions {
+        allWarningsAsErrors = false
+        freeCompilerArgs += listOf(
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+        )
+    }
     packaging {
         jniLibs {
             excludes += listOf(
