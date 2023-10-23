@@ -9,6 +9,7 @@ espresso-core = "3.5.1"
 junit = "4.13.2"
 kotlin = "1.9.10"
 lifecycle-runtime-ktx = "2.6.2"
+navigation-cmpose = "2.7.4"
 threadPoster = "1.0.1"
 
 [libraries]
@@ -27,6 +28,7 @@ cropper = { group = "com.vanniktech", name = "android-image-cropper", version.re
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-cmpose" }
 threadPoster = { group = "com.techyourchance", name = "threadposter", version.ref = "threadPoster" }
 
 [plugins]
