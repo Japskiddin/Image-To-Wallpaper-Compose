@@ -107,17 +107,21 @@ fun HomeButton(icon: Int, desc: Int, onClick: () -> Unit, modifier: Modifier = M
     }
 }
 
-@Preview(name = "Light mode", showBackground = true, showSystemUi = true)
+@Preview(
+    name = "Light mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    showBackground = true,
+    showSystemUi = true
+)
 @Preview(
     name = "Dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     showBackground = true,
     showSystemUi = true
 )
-
 @Composable
 fun HomeScreenPreview() {
-    ImageToWallpaperTheme {
+    ImageToWallpaperTheme(dynamicColor = false) {
         HomeScreen()
     }
 }
@@ -125,7 +129,7 @@ fun HomeScreenPreview() {
 @Preview
 @Composable
 fun ToolBarPreview(title: String = stringResource(id = R.string.app_name)) {
-    ImageToWallpaperTheme {
+    ImageToWallpaperTheme(dynamicColor = false) {
         ToolBar(title)
     }
 }
@@ -133,7 +137,7 @@ fun ToolBarPreview(title: String = stringResource(id = R.string.app_name)) {
 @Preview
 @Composable
 fun HomeButtonPreview() {
-    ImageToWallpaperTheme {
+    ImageToWallpaperTheme(dynamicColor = false) {
         HomeButton(
             icon = R.drawable.ic_gallery,
             desc = R.string.select_image,
