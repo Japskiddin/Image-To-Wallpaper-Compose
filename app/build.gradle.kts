@@ -80,7 +80,8 @@ android {
         val variant = this
         variant.outputs.map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
             .forEach { output ->
-                val outputFileName = "image_to_wallpaper-${variant.flavorName}-${variant.versionName}-${buildType.name}.apk"
+                val outputFileName =
+                    "image_to_wallpaper-${variant.flavorName}-${variant.versionName}-${buildType.name}.apk"
                 output.outputFileName = outputFileName
             }
     }
@@ -105,6 +106,8 @@ dependencies {
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
+    implementation(libs.cropper)
+    implementation(libs.threadPoster)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
