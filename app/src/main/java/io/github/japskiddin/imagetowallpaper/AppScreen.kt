@@ -30,7 +30,7 @@ import io.github.japskiddin.imagetowallpaper.ui.theme.ImageToWallpaperTheme
 const val ROUTE_HOME = "home"
 const val ROUTE_SETTINGS = "home"
 
-sealed class Screen(val route: String, @StringRes val titleId: Int) {
+sealed class Screen(val route: String, @StringRes val title: Int) {
     data object Home : Screen(ROUTE_HOME, R.string.app_name)
     data object Settings : Screen(ROUTE_SETTINGS, R.string.settings)
 }
@@ -87,7 +87,7 @@ fun ToolBar(
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = { Text(text = stringResource(id = screen.titleId)) },
+        title = { Text(text = stringResource(id = screen.title)) },
         actions = {
             if (screen.route == ROUTE_HOME) {
                 IconButton(onClick = onSettingsClick) {
