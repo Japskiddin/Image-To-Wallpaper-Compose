@@ -4,4 +4,5 @@
     <string name="select_image">Select image</string>
     <string name="set_wallpaper">Set wallpaper</string>
     <string name="back">Back</string>
+    <string name="aspect_ratio">Aspect ratio</string>
 </resources>

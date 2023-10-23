@@ -24,12 +24,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.github.japskiddin.imagetowallpaper.ui.screens.HomeScreen
+import io.github.japskiddin.imagetowallpaper.ui.screens.SettingsScreen
 import io.github.japskiddin.imagetowallpaper.ui.theme.ImageToWallpaperTheme
 
 const val ROUTE_HOME = "home"
+const val ROUTE_SETTINGS = "home"
 
 sealed class Screen(val route: String, @StringRes val titleId: Int) {
     data object Home : Screen(ROUTE_HOME, R.string.app_name)
+    data object Settings : Screen(ROUTE_SETTINGS, R.string.settings)
 }
 
 @Composable
@@ -47,11 +50,13 @@ fun AppScreen(
                 val backStackEntry by navController.currentBackStackEntryAsState()
                 val currentScreen = when (backStackEntry?.destination?.route) {
                     ROUTE_HOME -> Screen.Home
+                    ROUTE_SETTINGS -> Screen.Settings
                     else -> Screen.Home
                 }
                 ToolBar(
                     screen = currentScreen,
                     canNavigateBack = navController.previousBackStackEntry != null,
+                    onSettingsClick = { navController.navigate(Screen.Settings.route) },
                     navigateUp = { navController.navigateUp() })
             },
             content = { innerPadding ->
@@ -62,6 +67,9 @@ fun AppScreen(
                 ) {
                     composable(route = Screen.Home.route) {
                         HomeScreen()
+                    }
+                    composable(route = Screen.Settings.route) {
+                        SettingsScreen()
                     }
                 }
             },
@@ -75,13 +83,14 @@ fun ToolBar(
     screen: Screen,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
         title = { Text(text = stringResource(id = screen.titleId)) },
         actions = {
             if (screen.route == ROUTE_HOME) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = onSettingsClick) {
                     Icon(
                         imageVector = Icons.Rounded.Settings,
                         contentDescription = stringResource(id = R.string.settings),
@@ -130,7 +139,8 @@ fun ToolBarPreview() {
         ToolBar(
             screen = Screen.Home,
             canNavigateBack = false,
-            navigateUp = { /*TODO*/ }
+            navigateUp = { },
+            onSettingsClick = { }
         )
     }
 }
