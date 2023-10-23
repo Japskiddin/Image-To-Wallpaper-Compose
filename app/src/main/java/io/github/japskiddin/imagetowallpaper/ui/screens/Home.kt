@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
@@ -43,14 +44,16 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             )
             {
                 AndroidView(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                     factory = { context ->
                         CropImageView(context).apply {
                             guidelines = CropImageView.Guidelines.ON
                         }
                     })
                 Row(
-                    modifier = modifier.fillMaxSize(),
+                    modifier = modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     HomeButton(
@@ -111,6 +114,7 @@ fun HomeButton(icon: Int, desc: Int, onClick: () -> Unit, modifier: Modifier = M
     showBackground = true,
     showSystemUi = true
 )
+
 @Composable
 fun HomeScreenPreview() {
     ImageToWallpaperTheme {
