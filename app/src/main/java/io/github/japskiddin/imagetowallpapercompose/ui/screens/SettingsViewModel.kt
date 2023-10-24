@@ -1,18 +1,20 @@
 package io.github.japskiddin.imagetowallpapercompose.ui.screens
 
 import androidx.lifecycle.ViewModel
-import io.github.japskiddin.imagetowallpapercompose.data.AspectRatio
-import io.github.japskiddin.imagetowallpapercompose.data.SettingsRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import androidx.lifecycle.ViewModelProvider
+import io.github.japskiddin.imagetowallpapercompose.data.repository.SettingsRepository
 
-class SettingsViewModel : ViewModel() {
-    private val repository: SettingsRepository = SettingsRepository()
-    private val _aspectRatio = MutableStateFlow(AspectRatio.RatioCustom)
-    val aspectRatio = _aspectRatio.asStateFlow()
+class SettingsViewModel(repository: SettingsRepository) : ViewModel() {
+    val appPreferences = repository.getFromDataStore()
+}
 
-    init {
-        _aspectRatio.update { repository.fetchAspectRatio() }
+class SettingsViewModelFactory(private val repository: SettingsRepository) :
+    ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return SettingsViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

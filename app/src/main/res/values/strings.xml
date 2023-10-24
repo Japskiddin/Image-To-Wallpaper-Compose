@@ -5,4 +5,8 @@
     <string name="set_wallpaper">Set wallpaper</string>
     <string name="back">Back</string>
     <string name="aspect_ratio">Aspect ratio</string>
+    <string name="app_theme_day">Day</string>
+    <string name="app_theme_night">Night</string>
+    <string name="app_theme_auto">Auto</string>
+    <string name="app_theme">App theme</string>
 </resources>
