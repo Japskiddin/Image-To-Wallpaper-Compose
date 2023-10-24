@@ -28,7 +28,7 @@ import io.github.japskiddin.imagetowallpapercompose.ui.screens.SettingsScreen
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 
 const val ROUTE_HOME = "home"
-const val ROUTE_SETTINGS = "home"
+const val ROUTE_SETTINGS = "settings"
 
 sealed class Screen(val route: String, @StringRes val title: Int) {
     data object Home : Screen(ROUTE_HOME, R.string.app_name)
@@ -89,7 +89,7 @@ fun ToolBar(
     TopAppBar(
         title = { Text(text = stringResource(id = screen.title)) },
         actions = {
-            if (screen.route == ROUTE_HOME) {
+            if (screen == Screen.Home) {
                 IconButton(onClick = onSettingsClick) {
                     Icon(
                         imageVector = Icons.Rounded.Settings,
