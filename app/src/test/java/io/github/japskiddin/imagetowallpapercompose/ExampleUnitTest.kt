@@ -1,4 +1,4 @@
-package io.github.japskiddin.imagetowallpaper
+package io.github.japskiddin.imagetowallpapercompose
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

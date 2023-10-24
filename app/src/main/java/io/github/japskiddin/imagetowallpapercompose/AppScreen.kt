@@ -1,4 +1,4 @@
-package io.github.japskiddin.imagetowallpaper
+package io.github.japskiddin.imagetowallpapercompose
 
 import android.content.res.Configuration
 import androidx.annotation.StringRes
@@ -23,9 +23,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import io.github.japskiddin.imagetowallpaper.ui.screens.HomeScreen
-import io.github.japskiddin.imagetowallpaper.ui.screens.SettingsScreen
-import io.github.japskiddin.imagetowallpaper.ui.theme.ImageToWallpaperTheme
+import io.github.japskiddin.imagetowallpapercompose.ui.screens.HomeScreen
+import io.github.japskiddin.imagetowallpapercompose.ui.screens.SettingsScreen
+import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 
 const val ROUTE_HOME = "home"
 const val ROUTE_SETTINGS = "home"

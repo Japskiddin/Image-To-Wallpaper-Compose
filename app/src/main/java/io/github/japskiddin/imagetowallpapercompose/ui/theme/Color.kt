@@ -1,4 +1,4 @@
-package io.github.japskiddin.imagetowallpaper.ui.theme
+package io.github.japskiddin.imagetowallpapercompose.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

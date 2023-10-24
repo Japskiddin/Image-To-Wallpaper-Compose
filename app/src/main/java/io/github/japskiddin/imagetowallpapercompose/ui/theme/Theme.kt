@@ -1,4 +1,4 @@
-package io.github.japskiddin.imagetowallpaper.ui.theme
+package io.github.japskiddin.imagetowallpapercompose.ui.theme
 
 import android.app.Activity
 import android.os.Build

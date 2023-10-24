@@ -1,4 +1,4 @@
-package io.github.japskiddin.imagetowallpaper.ui.screens
+package io.github.japskiddin.imagetowallpapercompose.ui.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -20,11 +20,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.canhub.cropper.CropImageView
-import io.github.japskiddin.imagetowallpaper.R
-import io.github.japskiddin.imagetowallpaper.ui.theme.ImageToWallpaperTheme
+import io.github.japskiddin.imagetowallpapercompose.R
+import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 
 // https://www.geeksforgeeks.org/android-jetpack-compose-implement-dark-mode/
 // https://stackoverflow.com/questions/69495413/jetpack-compose-force-switch-night-notnight-resources
+// https://github.com/google-developer-training/basic-android-kotlin-compose-training-cupcake/blob/navigation/app/src/main/java/com/example/cupcake/ui/OrderViewModel.kt
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {

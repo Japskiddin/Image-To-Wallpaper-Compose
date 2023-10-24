@@ -8,12 +8,12 @@ kotlin {
 }
 
 android {
-    namespace = "io.github.japskiddin.imagetowallpaper"
+    namespace = "io.github.japskiddin.imagetowallpapercompose"
     buildToolsVersion = AppConfig.buildTools
     compileSdk = AppConfig.compileSdk
 
     defaultConfig {
-        applicationId = "io.github.japskiddin.imagetowallpaper"
+        applicationId = "io.github.japskiddin.imagetowallpaper.compose"
         minSdk = AppConfig.minSdk
         targetSdk = AppConfig.targetSdk
         versionCode = AppConfig.versionCode
@@ -81,7 +81,7 @@ android {
         variant.outputs.map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
             .forEach { output ->
                 val outputFileName =
-                    "image_to_wallpaper-${variant.flavorName}-${variant.versionName}-${buildType.name}.apk"
+                    "image_to_wallpaper-compose-${variant.flavorName}-${variant.versionName}-${buildType.name}.apk"
                 output.outputFileName = outputFileName
             }
     }

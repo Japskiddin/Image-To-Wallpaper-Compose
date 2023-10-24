@@ -1,4 +1,4 @@
-package io.github.japskiddin.imagetowallpaper.ui.screens
+package io.github.japskiddin.imagetowallpapercompose.ui.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.github.japskiddin.imagetowallpaper.R
-import io.github.japskiddin.imagetowallpaper.ui.theme.ImageToWallpaperTheme
+import io.github.japskiddin.imagetowallpapercompose.R
+import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 
 @Composable
 fun SettingsScreen(

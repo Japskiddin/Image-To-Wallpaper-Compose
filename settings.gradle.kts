@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Image To Wallpaper"
+rootProject.name = "Image To Wallpaper Compose"
 include(":app")

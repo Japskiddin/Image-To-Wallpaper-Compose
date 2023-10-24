@@ -1,4 +1,4 @@
-package io.github.japskiddin.imagetowallpaper.data
+package io.github.japskiddin.imagetowallpapercompose.data
 
 enum class AspectRatio(val width: Int, val height: Int) {
     Ratio4To3(width = 4, height = 3),
