@@ -23,6 +23,7 @@ private val DarkColorScheme = darkColorScheme(
     background = Thunder,
     surface = BlueEyes,
     onPrimary = Color.White,
+    onBackground = Color.White,
     onSurface = Color.White
 )
 
@@ -33,6 +34,7 @@ private val LightColorScheme = lightColorScheme(
     background = Iron,
     surface = BlueEyes,
     onPrimary = Color.White,
+    onBackground = Color.Black,
     onSurface = Color.White
 )
 
