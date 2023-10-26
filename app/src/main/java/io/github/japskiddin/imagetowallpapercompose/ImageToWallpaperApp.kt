@@ -36,45 +36,47 @@ sealed class Screen(val route: String, @StringRes val title: Int) {
 }
 
 @Composable
-fun AppScreen(
+fun ImageToWallpaperApp(
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        val navController = rememberNavController()
+    ImageToWallpaperTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            val navController = rememberNavController()
 
-        Scaffold(
-            topBar = {
-                val backStackEntry by navController.currentBackStackEntryAsState()
-                val currentScreen = when (backStackEntry?.destination?.route) {
-                    ROUTE_HOME -> Screen.Home
-                    ROUTE_SETTINGS -> Screen.Settings
-                    else -> Screen.Home
-                }
-                ToolBar(
-                    screen = currentScreen,
-                    canNavigateBack = navController.previousBackStackEntry != null,
-                    onSettingsClick = { navController.navigate(Screen.Settings.route) },
-                    navigateUp = { navController.navigateUp() })
-            },
-            content = { innerPadding ->
-                NavHost(
-                    navController = navController,
-                    startDestination = Screen.Home.route,
-                    modifier = modifier.padding(innerPadding)
-                ) {
-                    composable(route = Screen.Home.route) {
-                        HomeScreen()
+            Scaffold(
+                topBar = {
+                    val backStackEntry by navController.currentBackStackEntryAsState()
+                    val currentScreen = when (backStackEntry?.destination?.route) {
+                        ROUTE_HOME -> Screen.Home
+                        ROUTE_SETTINGS -> Screen.Settings
+                        else -> Screen.Home
                     }
-                    composable(route = Screen.Settings.route) {
-                        SettingsScreen()
+                    ToolBar(
+                        screen = currentScreen,
+                        canNavigateBack = navController.previousBackStackEntry != null,
+                        onSettingsClick = { navController.navigate(Screen.Settings.route) },
+                        navigateUp = { navController.navigateUp() })
+                },
+                content = { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.Home.route,
+                        modifier = modifier.padding(innerPadding)
+                    ) {
+                        composable(route = Screen.Home.route) {
+                            HomeScreen()
+                        }
+                        composable(route = Screen.Settings.route) {
+                            SettingsScreen()
+                        }
                     }
-                }
-            },
-            modifier = modifier
-        )
+                },
+                modifier = modifier
+            )
+        }
     }
 }
 
@@ -128,7 +130,7 @@ fun ToolBar(
 @Composable
 fun AppScreenPreview() {
     ImageToWallpaperTheme(dynamicColor = false) {
-        AppScreen()
+        ImageToWallpaperApp()
     }
 }
 
