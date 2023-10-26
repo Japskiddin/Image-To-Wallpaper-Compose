@@ -20,74 +20,72 @@ import io.github.japskiddin.imagetowallpapercompose.ui.screens.HomeScreen
 import io.github.japskiddin.imagetowallpapercompose.ui.screens.SettingsScreen
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 
-const val ROUTE_HOME = "home"
-const val ROUTE_SETTINGS = "settings"
+sealed class Screen(val route: Route, @StringRes val title: Int) {
+    data object Home : Screen(Route.HOME, R.string.app_name)
+    data object Settings : Screen(Route.SETTINGS, R.string.settings)
 
-sealed class Screen(val route: String, @StringRes val title: Int) {
-    data object Home : Screen(ROUTE_HOME, R.string.app_name)
-    data object Settings : Screen(ROUTE_SETTINGS, R.string.settings)
+    enum class Route {
+        HOME,
+        SETTINGS
+    }
 }
 
 @Composable
-fun ImageToWallpaperApp(
-    modifier: Modifier = Modifier,
-) {
+fun ImageToWallpaperApp() {
     ImageToWallpaperTheme {
+        val navController = rememberNavController()
+
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            val navController = rememberNavController()
-
             Scaffold(
                 topBar = {
                     val backStackEntry by navController.currentBackStackEntryAsState()
                     val currentScreen = when (backStackEntry?.destination?.route) {
-                        ROUTE_HOME -> Screen.Home
-                        ROUTE_SETTINGS -> Screen.Settings
+                        Screen.Route.HOME.name -> Screen.Home
+                        Screen.Route.SETTINGS.name -> Screen.Settings
                         else -> Screen.Home
                     }
                     ToolBar(
                         screen = currentScreen,
                         canNavigateBack = navController.previousBackStackEntry != null,
-                        onSettingsClick = { navController.navigate(Screen.Settings.route) },
+                        onSettingsClick = { navController.navigate(Screen.Settings.route.name) },
                         navigateUp = { navController.navigateUp() })
                 },
                 content = { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.Home.route,
-                        modifier = modifier.padding(innerPadding)
+                        startDestination = Screen.Home.route.name,
+                        modifier = Modifier.padding(innerPadding)
                     ) {
-                        composable(route = Screen.Home.route) {
+                        composable(route = Screen.Home.route.name) {
                             HomeScreen()
                         }
-                        composable(route = Screen.Settings.route) {
+                        composable(route = Screen.Settings.route.name) {
                             SettingsScreen()
                         }
                     }
-                },
-                modifier = modifier
+                }
             )
         }
     }
 }
 
 @Preview(
-    name = "Light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    name = "App Light mode",
     showBackground = true,
     showSystemUi = true
 )
 @Preview(
-    name = "Dark mode",
+    name = "App Dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     showBackground = true,
     showSystemUi = true
 )
 @Composable
 fun AppScreenPreview() {
-    ImageToWallpaperTheme(dynamicColor = false) {
+    ImageToWallpaperTheme {
         ImageToWallpaperApp()
     }
 }
