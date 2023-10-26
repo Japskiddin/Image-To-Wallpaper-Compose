@@ -26,7 +26,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     )
     {
         AndroidView(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .weight(1f),
             factory = { context ->
@@ -34,37 +34,41 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     guidelines = CropImageView.Guidelines.ON
                 }
             })
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            MenuButton(
-                icon = R.drawable.ic_wallpaper,
-                desc = R.string.set_wallpaper,
-                onClick = {/*TODO*/ })
-            MenuButton(
-                icon = R.drawable.ic_gallery,
-                desc = R.string.select_image,
-                onClick = {/*TODO*/ })
-        }
+        Menu(modifier = modifier)
+    }
+}
+
+@Composable
+fun Menu(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        MenuButton(
+            icon = R.drawable.ic_wallpaper,
+            desc = R.string.set_wallpaper,
+            onClick = {/*TODO*/ })
+        MenuButton(
+            icon = R.drawable.ic_gallery,
+            desc = R.string.select_image,
+            onClick = {/*TODO*/ })
     }
 }
 
 @Preview(
-    name = "Light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    name = "Home Light mode",
     showBackground = true,
     showSystemUi = true
 )
 @Preview(
-    name = "Dark mode",
+    name = "Home Dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     showBackground = true,
     showSystemUi = true
 )
 @Composable
 fun HomeScreenPreview() {
-    ImageToWallpaperTheme(dynamicColor = false) {
+    ImageToWallpaperTheme {
         HomeScreen()
     }
 }

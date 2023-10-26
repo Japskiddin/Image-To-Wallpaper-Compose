@@ -35,7 +35,10 @@ fun SettingsScreen(
         )
     )
 ) {
-    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+    ) {
         val appPreferences by viewModel.appPreferences.collectAsState(DEFAULT_PREFERENCE)
         SettingsItem(
             title = stringResource(id = R.string.aspect_ratio),
