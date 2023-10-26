@@ -19,7 +19,7 @@ import androidx.core.view.WindowCompat
 private val DarkColorScheme = darkColorScheme(
     primary = BlueEyes,
     background = Thunder,
-    surface = BlueEyes,
+    surface = Color.Black,
     onPrimary = Color.White,
     onBackground = Color.White,
     onSurface = Color.White
@@ -28,10 +28,10 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = BlueEyes,
     background = Iron,
-    surface = BlueEyes,
+    surface = Color.White,
     onPrimary = Color.White,
     onBackground = Color.Black,
-    onSurface = Color.White
+    onSurface = Color.Black
 )
 
 @Composable

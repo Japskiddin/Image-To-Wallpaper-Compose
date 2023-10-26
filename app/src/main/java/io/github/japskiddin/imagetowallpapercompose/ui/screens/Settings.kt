@@ -13,12 +13,16 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -27,10 +31,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.japskiddin.imagetowallpapercompose.R
 import io.github.japskiddin.imagetowallpapercompose.data.repository.AppTheme
+import io.github.japskiddin.imagetowallpapercompose.data.repository.AspectRatio
 import io.github.japskiddin.imagetowallpapercompose.data.repository.DEFAULT_PREFERENCE
 import io.github.japskiddin.imagetowallpapercompose.data.repository.SettingsRepository
+import io.github.japskiddin.imagetowallpapercompose.ui.components.AspectRatioDialog
 import io.github.japskiddin.imagetowallpapercompose.ui.components.SettingsItem
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
+
+// TODO: add version
 
 @Composable
 fun SettingsScreen(
@@ -52,6 +60,8 @@ fun SettingsScreen(
             )
         },
         content = { innerPadding ->
+            val openAspectRationDialog = remember { mutableStateOf(false) }
+
             Column(
                 modifier = modifier
                     .padding(innerPadding)
@@ -62,7 +72,7 @@ fun SettingsScreen(
                     title = stringResource(id = R.string.aspect_ratio),
                     description = appPreferences.aspectRatio.toString(),
                     onClick = {
-
+                        openAspectRationDialog.value = true
                     }
                 )
                 Divider(
@@ -85,12 +95,20 @@ fun SettingsScreen(
                     }
                 )
             }
+
+            if (openAspectRationDialog.value) {
+                AspectRatioDialog(
+                    onDialogClose = { openAspectRationDialog.value = false },
+                    aspectRatio = AspectRatio.RATIO_4_TO_3,
+                    onDismissRequest = { /*TODO*/ },
+                    onConfirmation = { /*TODO*/ },
+                    modifier = modifier
+                )
+            }
         },
         modifier = modifier.fillMaxSize()
     )
 }
-
-// TODO: add shadow
 
 @Composable
 fun SettingsToolBar(
@@ -107,6 +125,12 @@ fun SettingsToolBar(
                 )
             }
         },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+        ),
         modifier = modifier
     )
 }
