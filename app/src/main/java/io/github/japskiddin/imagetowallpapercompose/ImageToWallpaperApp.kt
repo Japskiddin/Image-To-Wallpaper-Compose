@@ -1,33 +1,27 @@
 package io.github.japskiddin.imagetowallpapercompose
 
 import android.content.res.Configuration
-import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import io.github.japskiddin.imagetowallpapercompose.ui.components.ToolBar
 import io.github.japskiddin.imagetowallpapercompose.ui.screens.HomeScreen
 import io.github.japskiddin.imagetowallpapercompose.ui.screens.SettingsScreen
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 
-sealed class Screen(val route: Route, @StringRes val title: Int) {
-    data object Home : Screen(Route.HOME, R.string.app_name)
-    data object Settings : Screen(Route.SETTINGS, R.string.settings)
-
-    enum class Route {
-        HOME,
-        SETTINGS
-    }
+sealed class Screen(val route: String) {
+    data object Home : Screen("home")
+    data object Settings : Screen("settings")
 }
 
 @Composable
@@ -39,37 +33,58 @@ fun ImageToWallpaperApp() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Scaffold(
-                topBar = {
-                    val backStackEntry by navController.currentBackStackEntryAsState()
-                    val currentScreen = when (backStackEntry?.destination?.route) {
-                        Screen.Route.HOME.name -> Screen.Home
-                        Screen.Route.SETTINGS.name -> Screen.Settings
-                        else -> Screen.Home
-                    }
-                    ToolBar(
-                        screen = currentScreen,
-                        canNavigateBack = navController.previousBackStackEntry != null,
-                        onSettingsClick = { navController.navigate(Screen.Settings.route.name) },
-                        navigateUp = { navController.navigateUp() })
-                },
-                content = { innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screen.Home.route.name,
-                        modifier = Modifier.padding(innerPadding)
-                    ) {
-                        composable(route = Screen.Home.route.name) {
-                            HomeScreen()
-                        }
-                        composable(route = Screen.Settings.route.name) {
-                            SettingsScreen()
-                        }
-                    }
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Home.route,
+            ) {
+                addGraph(Screen.Home.route) {
+                    HomeScreen(
+                        onSettingsClick = { navController.navigate(Screen.Settings.route) }
+                    )
                 }
-            )
+                addGraph(Screen.Settings.route) {
+                    SettingsScreen(
+                        onNavigateUp = { navController.popBackStack() }
+                    )
+                }
+            }
         }
     }
+}
+
+private fun NavGraphBuilder.addGraph(
+    route: String,
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
+) {
+    val transitionDuration = 400
+    composable(
+        route = route,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(transitionDuration)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(transitionDuration)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(transitionDuration)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(transitionDuration)
+            )
+        },
+        content = content
+    )
 }
 
 @Preview(
