@@ -1,5 +1,6 @@
 package io.github.japskiddin.imagetowallpapercompose.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +13,6 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import io.github.japskiddin.imagetowallpapercompose.R
 import io.github.japskiddin.imagetowallpapercompose.data.repository.AspectRatio
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
@@ -38,87 +39,68 @@ fun AspectRatioDialog(
     onConfirmation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val aspectRatios = AspectRatio.entries.toTypedArray()
+
     Dialog(
         onDismissRequest = onDialogClose,
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
     ) {
-        Surface(
-            shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colorScheme.surface,
-            shadowElevation = 4.dp,
-            modifier = modifier.fillMaxWidth()
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = MaterialTheme.shapes.large
+                )
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_aspect_ratio),
+                contentDescription = stringResource(id = R.string.aspect_ratio),
+                modifier = modifier.size(24.dp)
+            )
+            Spacer(modifier = modifier.height(16.dp))
+            Text(
+                text = stringResource(id = R.string.aspect_ratio),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Spacer(modifier = modifier.height(16.dp))
             Column(
                 modifier = modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .weight(1f, false)
+                    .selectableGroup()
+                    .verticalScroll(rememberScrollState())
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_aspect_ratio),
-                    contentDescription = stringResource(id = R.string.aspect_ratio),
-                    modifier = modifier.size(24.dp)
-                )
-                Spacer(modifier = modifier.height(16.dp))
-                Text(
-                    text = stringResource(id = R.string.aspect_ratio),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = modifier.height(16.dp))
-                Column(
-                    modifier = modifier
-                        .selectableGroup()
-                        .verticalScroll(rememberScrollState())
-                ) {
+                aspectRatios.forEach { aspectRatio ->
+                    val isCustomAspectRatio = aspectRatio == AspectRatio.RATIO_CUSTOM
+                    val title = if (isCustomAspectRatio)
+                        stringResource(id = R.string.aspect_ratio_custom)
+                    else
+                        aspectRatio.toString()
                     RadioTextButton(
                         selected = false,
-                        title = AspectRatio.RATIO_4_TO_3.toString(),
-                        onClick = { /*TODO*/ }
-                    )
-                    RadioTextButton(
-                        selected = false,
-                        title = AspectRatio.RATIO_3_TO_4.toString(),
-                        onClick = { /*TODO*/ }
-                    )
-                    RadioTextButton(
-                        selected = false,
-                        title = AspectRatio.RATIO_16_TO_9.toString(),
-                        onClick = { /*TODO*/ }
-                    )
-                    RadioTextButton(
-                        selected = false,
-                        title = AspectRatio.RATIO_9_TO_16.toString(),
-                        onClick = { /*TODO*/ }
-                    )
-                    RadioTextButton(
-                        selected = false,
-                        title = AspectRatio.RATIO_18_TO_9.toString(),
-                        onClick = { /*TODO*/ }
-                    )
-                    RadioTextButton(
-                        selected = false,
-                        title = AspectRatio.RATIO_9_TO_18.toString(),
-                        onClick = { /*TODO*/ }
-                    )
-                    RadioTextButton(
-                        selected = false,
-                        title = AspectRatio.RATIO_CUSTOM.toString(),
-                        onClick = { /*TODO*/ }
+                        title = title,
+                        onClick = { /*TODO*/ },
+                        modifier = modifier
                     )
                 }
-                Spacer(modifier = modifier.height(24.dp))
-                Row(modifier = modifier.align(Alignment.End)) {
-                    TextButton(onClick = onDialogClose) {
-                        Text(
-                            text = stringResource(id = R.string.cancel),
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                        )
-                    }
-                    TextButton(onClick = onDialogClose) {
-                        Text(
-                            text = stringResource(id = R.string.select),
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                        )
-                    }
+            }
+            Spacer(modifier = modifier.height(24.dp))
+            Row(
+                modifier = modifier.align(Alignment.End)
+            ) {
+                TextButton(onClick = onDialogClose) {
+                    Text(
+                        text = stringResource(id = R.string.cancel),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    )
+                }
+                TextButton(onClick = onDialogClose) {
+                    Text(
+                        text = stringResource(id = R.string.select),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    )
                 }
             }
         }
