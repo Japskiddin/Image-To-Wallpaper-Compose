@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.japskiddin.imagetowallpapercompose.AppTheme
-import io.github.japskiddin.imagetowallpapercompose.AspectRatio
 import io.github.japskiddin.imagetowallpapercompose.R
 import io.github.japskiddin.imagetowallpapercompose.SettingsViewModel
 import io.github.japskiddin.imagetowallpapercompose.ui.components.AspectRatioDialog
@@ -52,6 +51,8 @@ fun SettingsScreen(
             )
         },
         content = { innerPadding ->
+            val themeState by viewModel.themeState.collectAsState()
+            val aspectRatioState by viewModel.aspectRatioState.collectAsState()
             val openAspectRationDialog = remember { mutableStateOf(false) }
 
             Column(
@@ -59,8 +60,6 @@ fun SettingsScreen(
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState())
             ) {
-                val themeState by viewModel.themeState.collectAsState()
-                val aspectRatioState by viewModel.aspectRatioState.collectAsState()
                 SettingsItem(
                     title = stringResource(id = R.string.aspect_ratio),
                     description = aspectRatioState.aspectRatio.toString(),
@@ -92,7 +91,7 @@ fun SettingsScreen(
             if (openAspectRationDialog.value) {
                 AspectRatioDialog(
                     onDialogClose = { openAspectRationDialog.value = false },
-                    aspectRatio = AspectRatio.RATIO_4_TO_3,
+                    aspectRatio = aspectRatioState.aspectRatio,
                     onDismissRequest = { /*TODO*/ },
                     onConfirmation = { /*TODO*/ },
                     modifier = modifier
