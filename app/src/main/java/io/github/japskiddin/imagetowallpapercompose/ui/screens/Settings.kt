@@ -24,16 +24,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import io.github.japskiddin.imagetowallpapercompose.AppTheme
+import io.github.japskiddin.imagetowallpapercompose.AspectRatio
 import io.github.japskiddin.imagetowallpapercompose.R
-import io.github.japskiddin.imagetowallpapercompose.data.repository.AppTheme
-import io.github.japskiddin.imagetowallpapercompose.data.repository.AspectRatio
-import io.github.japskiddin.imagetowallpapercompose.data.repository.DEFAULT_PREFERENCE
-import io.github.japskiddin.imagetowallpapercompose.data.repository.SettingsRepository
+import io.github.japskiddin.imagetowallpapercompose.SettingsViewModel
 import io.github.japskiddin.imagetowallpapercompose.ui.components.AspectRatioDialog
 import io.github.japskiddin.imagetowallpapercompose.ui.components.SettingsItem
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
@@ -44,13 +42,7 @@ import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperThe
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     onNavigateUp: () -> Unit,
-    viewModel: SettingsViewModel = viewModel(
-        factory = SettingsViewModelFactory(
-            repository = SettingsRepository(
-                LocalContext.current
-            )
-        )
-    )
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
     Scaffold(
         topBar = {
@@ -67,10 +59,11 @@ fun SettingsScreen(
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState())
             ) {
-                val appPreferences by viewModel.appPreferences.collectAsState(DEFAULT_PREFERENCE)
+                val themeState by viewModel.themeState.collectAsState()
+                val aspectRatioState by viewModel.aspectRatioState.collectAsState()
                 SettingsItem(
                     title = stringResource(id = R.string.aspect_ratio),
-                    description = appPreferences.aspectRatio.toString(),
+                    description = aspectRatioState.aspectRatio.toString(),
                     onClick = {
                         openAspectRationDialog.value = true
                     }
@@ -84,10 +77,10 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(id = R.string.app_theme),
                     description = stringResource(
-                        id = when (appPreferences.appTheme) {
+                        id = when (themeState.theme) {
                             AppTheme.MODE_DAY -> R.string.app_theme_day
                             AppTheme.MODE_NIGHT -> R.string.app_theme_night
-                            AppTheme.MODE_AUTO -> R.string.app_theme_auto
+                            AppTheme.MODE_SYSTEM -> R.string.app_theme_system
                         }
                     ),
                     onClick = {

@@ -25,8 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import io.github.japskiddin.imagetowallpapercompose.AspectRatio
 import io.github.japskiddin.imagetowallpapercompose.R
-import io.github.japskiddin.imagetowallpapercompose.data.repository.AspectRatio
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 
 // https://stackoverflow.com/questions/68852110/show-custom-alert-dialog-in-jetpack-compose
