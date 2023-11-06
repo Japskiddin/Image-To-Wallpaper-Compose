@@ -12,4 +12,6 @@
     <string name="cancel">Cancel</string>
     <string name="select">Select</string>
     <string name="aspect_ratio_custom">Custom</string>
+    <string name="err_activity_not_found">No application found to handle intent</string>
+    <string name="err_permission_not_granted">Permission not granted</string>
 </resources>

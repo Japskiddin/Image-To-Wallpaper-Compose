@@ -115,6 +115,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
 
+    implementation(libs.exifinterface)
     implementation(libs.cropper)
     implementation(libs.threadposter)
 
