@@ -81,7 +81,7 @@ fun AppThemeDialog(
                         else -> R.string.app_theme_system
                     }
                     RadioTextButton(
-                        selected = selectedAppTheme.value == appTheme,
+                        checked = selectedAppTheme.value == appTheme,
                         title = stringResource(id = title),
                         onClick = { selectedAppTheme.value = appTheme },
                         modifier = modifier

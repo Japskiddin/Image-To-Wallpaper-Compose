@@ -81,7 +81,7 @@ fun AspectRatioDialog(
                     else
                         aspectRatio.toString()
                     RadioTextButton(
-                        selected = selectedAspectRatio.value == aspectRatio,
+                        checked = selectedAspectRatio.value == aspectRatio,
                         title = title,
                         onClick = { selectedAspectRatio.value = aspectRatio },
                         modifier = modifier

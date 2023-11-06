@@ -34,7 +34,7 @@ import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperThe
 fun HomeScreen(onSettingsClick: () -> Unit, modifier: Modifier = Modifier) {
     Scaffold(
         topBar = {
-            HomeToolBar(
+            ToolBar(
                 onSettingsClick = onSettingsClick,
                 modifier = modifier
             )
@@ -78,7 +78,7 @@ fun Menu(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HomeToolBar(
+private fun ToolBar(
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

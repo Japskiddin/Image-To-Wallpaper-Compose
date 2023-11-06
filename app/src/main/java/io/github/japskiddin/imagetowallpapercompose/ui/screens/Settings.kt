@@ -46,7 +46,7 @@ fun SettingsScreen(
 ) {
     Scaffold(
         topBar = {
-            SettingsToolBar(
+            ToolBar(
                 onNavigateUp = onNavigateUp,
                 modifier = modifier
             )
@@ -116,7 +116,7 @@ fun SettingsScreen(
 }
 
 @Composable
-fun SettingsToolBar(
+private fun ToolBar(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {

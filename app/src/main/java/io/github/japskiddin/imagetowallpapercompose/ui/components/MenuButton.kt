@@ -18,7 +18,7 @@ import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperThe
 @Composable
 fun MenuButton(icon: Int, desc: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
     IconButton(
-        onClick = onClick,
+        onClick = { onClick() },
         modifier = modifier
             .padding(8.dp)
             .background(

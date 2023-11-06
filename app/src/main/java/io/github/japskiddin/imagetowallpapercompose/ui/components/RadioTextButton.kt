@@ -16,7 +16,7 @@ import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperThe
 
 @Composable
 fun RadioTextButton(
-    selected: Boolean,
+    checked: Boolean,
     title: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -28,8 +28,8 @@ fun RadioTextButton(
             .clickable { onClick() }
     ) {
         RadioButton(
-            selected = selected,
-            onClick = null
+            selected = checked,
+            onClick = { onClick() }
         )
         Text(
             text = title,
@@ -43,6 +43,6 @@ fun RadioTextButton(
 @Composable
 fun RadioTextButtonPreview() {
     ImageToWallpaperTheme {
-        RadioTextButton(selected = true, title = "Text", onClick = { })
+        RadioTextButton(checked = true, title = "Text", onClick = {})
     }
 }
