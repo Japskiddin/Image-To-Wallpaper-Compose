@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.japskiddin.imagetowallpapercompose.AppTheme
 import io.github.japskiddin.imagetowallpapercompose.R
 import io.github.japskiddin.imagetowallpapercompose.SettingsViewModel
+import io.github.japskiddin.imagetowallpapercompose.ui.components.AppThemeDialog
 import io.github.japskiddin.imagetowallpapercompose.ui.components.AspectRatioDialog
 import io.github.japskiddin.imagetowallpapercompose.ui.components.SettingsItem
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
@@ -54,6 +55,7 @@ fun SettingsScreen(
             val themeState by viewModel.themeState.collectAsState()
             val aspectRatioState by viewModel.aspectRatioState.collectAsState()
             val openAspectRationDialog = remember { mutableStateOf(false) }
+            val openAppThemeDialog = remember { mutableStateOf(false) }
 
             Column(
                 modifier = modifier
@@ -83,19 +85,30 @@ fun SettingsScreen(
                         }
                     ),
                     onClick = {
-
+                        openAppThemeDialog.value = true
                     }
                 )
             }
 
             if (openAspectRationDialog.value) {
                 AspectRatioDialog(
-                    onDialogClose = { openAspectRationDialog.value = false },
                     aspectRatio = aspectRatioState.aspectRatio,
-                    onDismissRequest = { /*TODO*/ },
-                    onConfirmation = { /*TODO*/ },
+                    onDialogDismiss = { openAspectRationDialog.value = false },
+                    onDialogConfirm = {
+                        openAspectRationDialog.value = false
+                        viewModel.setAspectRatio(it)
+                    },
                     modifier = modifier
                 )
+            }
+            if (openAppThemeDialog.value) {
+                AppThemeDialog(
+                    appTheme = themeState.theme,
+                    onDialogDismiss = { openAppThemeDialog.value = false },
+                    onDialogConfirm = {
+                        openAppThemeDialog.value = false
+                        viewModel.setAppTheme(it)
+                    })
             }
         },
         modifier = modifier.fillMaxSize()

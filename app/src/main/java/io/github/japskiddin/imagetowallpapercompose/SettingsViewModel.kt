@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -93,6 +94,9 @@ class SettingsViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : View
             dataStore.edit { preferences ->
                 preferences[KEY_THEME] = appTheme.ordinal
             }
+            _themeState.update {
+                it.copy(theme = appTheme)
+            }
         }
     }
 
@@ -100,6 +104,9 @@ class SettingsViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : View
         viewModelScope.launch(Dispatchers.IO) {
             dataStore.edit { preferences ->
                 preferences[KEY_ASPECT_RATIO] = aspectRatio.ordinal
+            }
+            _aspectRatioState.update {
+                it.copy(aspectRatio = aspectRatio)
             }
         }
     }

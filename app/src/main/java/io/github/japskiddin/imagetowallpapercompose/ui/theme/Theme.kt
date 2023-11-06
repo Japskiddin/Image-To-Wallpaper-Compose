@@ -10,11 +10,15 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import io.github.japskiddin.imagetowallpapercompose.AppTheme
+import io.github.japskiddin.imagetowallpapercompose.SettingsViewModel
 
 private val DarkColorScheme = darkColorScheme(
     primary = BlueEyes,
@@ -36,17 +40,31 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun ImageToWallpaperTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    viewModel: SettingsViewModel = hiltViewModel(),
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    val themeState by viewModel.themeState.collectAsState()
+
+    val colorScheme = when (themeState.theme) {
+        AppTheme.MODE_SYSTEM -> {
+            val isSystemNightMode = isSystemInDarkTheme()
+            if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val context = LocalContext.current
+                if (isSystemNightMode)
+                    dynamicDarkColorScheme(context)
+                else
+                    dynamicLightColorScheme(context)
+            } else {
+                if (isSystemNightMode) {
+                    darkColorScheme()
+                } else {
+                    lightColorScheme()
+                }
+            }
         }
 
-        darkTheme -> DarkColorScheme
+        AppTheme.MODE_NIGHT -> DarkColorScheme
         else -> LightColorScheme
     }
     val view = LocalView.current
@@ -54,7 +72,6 @@ fun ImageToWallpaperTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
 

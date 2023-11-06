@@ -27,21 +27,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import io.github.japskiddin.imagetowallpapercompose.AspectRatio
+import io.github.japskiddin.imagetowallpapercompose.AppTheme
 import io.github.japskiddin.imagetowallpapercompose.R
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 
 // https://stackoverflow.com/questions/68852110/show-custom-alert-dialog-in-jetpack-compose
 
 @Composable
-fun AspectRatioDialog(
-    aspectRatio: AspectRatio,
+fun AppThemeDialog(
+    appTheme: AppTheme,
     onDialogDismiss: () -> Unit,
-    onDialogConfirm: (aspectRatio: AspectRatio) -> Unit,
+    onDialogConfirm: (appTheme: AppTheme) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val aspectRatios = AspectRatio.entries.toTypedArray()
-    val selectedAspectRatio = remember { mutableStateOf(aspectRatio) }
+    val appThemes = AppTheme.entries.toTypedArray()
+    val selectedAppTheme = remember { mutableStateOf(appTheme) }
 
     Dialog(
         onDismissRequest = { onDialogDismiss() },
@@ -58,13 +58,13 @@ fun AspectRatioDialog(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_aspect_ratio),
-                contentDescription = stringResource(id = R.string.aspect_ratio),
+                painter = painterResource(id = R.drawable.ic_night_mode),
+                contentDescription = stringResource(id = R.string.app_theme),
                 modifier = modifier.size(24.dp)
             )
             Spacer(modifier = modifier.height(16.dp))
             Text(
-                text = stringResource(id = R.string.aspect_ratio),
+                text = stringResource(id = R.string.app_theme),
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = modifier.height(16.dp))
@@ -74,16 +74,16 @@ fun AspectRatioDialog(
                     .selectableGroup()
                     .verticalScroll(rememberScrollState())
             ) {
-                aspectRatios.forEach { aspectRatio ->
-                    val isCustomAspectRatio = aspectRatio == AspectRatio.RATIO_CUSTOM
-                    val title = if (isCustomAspectRatio)
-                        stringResource(id = R.string.aspect_ratio_custom)
-                    else
-                        aspectRatio.toString()
+                appThemes.forEach { appTheme ->
+                    val title = when (appTheme) {
+                        AppTheme.MODE_DAY -> R.string.app_theme_day
+                        AppTheme.MODE_NIGHT -> R.string.app_theme_night
+                        else -> R.string.app_theme_system
+                    }
                     RadioTextButton(
-                        selected = selectedAspectRatio.value == aspectRatio,
-                        title = title,
-                        onClick = { selectedAspectRatio.value = aspectRatio },
+                        selected = selectedAppTheme.value == appTheme,
+                        title = stringResource(id = title),
+                        onClick = { selectedAppTheme.value = appTheme },
                         modifier = modifier
                     )
                 }
@@ -98,7 +98,7 @@ fun AspectRatioDialog(
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     )
                 }
-                TextButton(onClick = { onDialogConfirm(selectedAspectRatio.value) }) {
+                TextButton(onClick = { onDialogConfirm(selectedAppTheme.value) }) {
                     Text(
                         text = stringResource(id = R.string.select),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
@@ -111,10 +111,10 @@ fun AspectRatioDialog(
 
 @Preview
 @Composable
-fun AspectRatioDialogPreview() {
+fun AppThemeDialogPreview() {
     ImageToWallpaperTheme {
-        AspectRatioDialog(
-            aspectRatio = AspectRatio.RATIO_4_TO_3,
+        AppThemeDialog(
+            appTheme = AppTheme.MODE_DAY,
             onDialogDismiss = {},
             onDialogConfirm = {}
         )

@@ -83,7 +83,7 @@ android {
         variant.outputs.map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
             .forEach { output ->
                 val outputFileName =
-                    "image_to_wallpaper-compose-${variant.flavorName}-${variant.versionName}-${buildType.name}.apk"
+                    "image_to_wallpaper_compose-${variant.versionName}-${buildType.name}.apk"
                 output.outputFileName = outputFileName
             }
     }
