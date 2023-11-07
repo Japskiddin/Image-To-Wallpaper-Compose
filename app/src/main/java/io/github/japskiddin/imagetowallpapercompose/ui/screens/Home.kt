@@ -1,14 +1,13 @@
 package io.github.japskiddin.imagetowallpapercompose.ui.screens
 
 import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,26 +21,28 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.viewinterop.AndroidView
-import com.canhub.cropper.CropImageView
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import io.github.japskiddin.imagetowallpapercompose.CropViewModel
 import io.github.japskiddin.imagetowallpapercompose.R
+import io.github.japskiddin.imagetowallpapercompose.SettingsViewModel
 import io.github.japskiddin.imagetowallpapercompose.ui.components.MenuButton
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
-import io.github.japskiddin.imagetowallpapercompose.utils.getBitmapFromUri
-import io.github.japskiddin.imagetowallpapercompose.utils.getScreenHeight
-import io.github.japskiddin.imagetowallpapercompose.utils.getScreenWidth
 import io.github.japskiddin.imagetowallpapercompose.utils.hasPermission
 import io.github.japskiddin.imagetowallpapercompose.utils.openFile
 import io.github.japskiddin.imagetowallpapercompose.utils.requestPermission
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import io.moyuru.cropify.AspectRatio
+import io.moyuru.cropify.Cropify
+import io.moyuru.cropify.CropifyOption
+import io.moyuru.cropify.rememberCropifyState
 
 // https://www.geeksforgeeks.org/android-jetpack-compose-implement-dark-mode/
 // https://stackoverflow.com/questions/69495413/jetpack-compose-force-switch-night-notnight-resources
@@ -59,12 +60,60 @@ import kotlinx.coroutines.launch
 // https://startandroid.ru/ru/courses/compose/30-course/compose/673-urok-10-remember-mutablestateof.html
 // https://startandroid.ru/ru/courses/kotlin.html
 // https://metanit.com/kotlin/jetpack/5.2.php
+// https://github.com/MoyuruAizawa/Cropify
+
+// TODO: CropifyOption вынести во viewmodel
+// TODO: сделать один экран? настройки показывать выезжающим окном снизу
 
 @Composable
 fun HomeScreen(
-    onSettingsClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    cropViewModel: CropViewModel = viewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    onSettingsClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val aspectRatioState by settingsViewModel.aspectRatioState.collectAsState()
+    val cropifyState = rememberCropifyState()
+    val cropifyOption = remember {
+        mutableStateOf(
+            CropifyOption(
+                backgroundColor = backgroundColor,
+                frameAspectRatio = AspectRatio(
+                    aspectRatioState.aspectRatio.width,
+                    aspectRatioState.aspectRatio.height
+                ),
+                maskColor = backgroundColor
+            )
+        )
+    }
+
+    val imageUri by cropViewModel.imageUriState.collectAsState()
+
+    val openDocumentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri -> uri?.let { cropViewModel.setImageUri(it) } }
+    )
+    val getContentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri -> uri?.let { cropViewModel.setImageUri(it) } }
+    )
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                openFile(context, openDocumentLauncher, getContentLauncher)
+            } else {
+                Toast.makeText(
+                    context,
+                    R.string.err_permission_not_granted,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    )
+
     Scaffold(
         topBar = {
             ToolBar(
@@ -77,59 +126,30 @@ fun HomeScreen(
                 modifier = modifier.padding(innerPadding)
             )
             {
-                val context = LocalContext.current
-                val coroutineScope = rememberCoroutineScope()
-
-                val imageUri = remember { mutableStateOf<Uri?>(null) }
-                val image = remember { mutableStateOf<Bitmap?>(null) }
-
-                val openDocumentLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.OpenDocument(),
-                    onResult = { imageUri.value = it }
-                )
-                val getContentLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.GetContent(),
-                    onResult = { imageUri.value = it }
-                )
-                val requestPermissionLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.RequestPermission(),
-                    onResult = { isGranted ->
-                        if (isGranted) {
-                            openFile(context, openDocumentLauncher, getContentLauncher)
-                        } else {
+                imageUri?.let {
+                    Cropify(
+                        uri = it,
+                        state = cropifyState,
+                        option = cropifyOption.value,
+                        onImageCropped = {},
+                        onFailedToLoadImage = {
                             Toast.makeText(
-                                context.applicationContext,
-                                R.string.err_permission_not_granted,
-                                Toast.LENGTH_LONG
+                                context,
+                                R.string.err_load_image,
+                                Toast.LENGTH_SHORT
                             ).show()
-                        }
-                    }
-                )
-
-                imageUri.value?.let {
-                    coroutineScope.launch(Dispatchers.IO) {
-                        image.value =
-                            getBitmapFromUri(context, it, getScreenWidth(), getScreenHeight())
-                    }
+                        },
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    )
                 }
 
-                AndroidView(
+                Spacer(
                     modifier = modifier
                         .fillMaxWidth()
-                        .weight(1f),
-                    factory = {
-                        CropImageView(it).apply {
-                            guidelines = CropImageView.Guidelines.ON
-                            setOnCropImageCompleteListener { _view, result ->
-//                                getCropResult(result)
-                            }
-                        }
-                    },
-                    update = { view ->
-//                        image.value?.let { bitmap ->
-//                            view.setImageBitmap(bitmap)
-//                        }
-                    })
+                        .weight(1f)
+                )
                 Row(
                     modifier = modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center

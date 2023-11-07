@@ -44,6 +44,11 @@ fun SettingsScreen(
     onNavigateUp: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val themeState by viewModel.themeState.collectAsState()
+    val aspectRatioState by viewModel.aspectRatioState.collectAsState()
+    val openAspectRationDialog = remember { mutableStateOf(false) }
+    val openAppThemeDialog = remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             ToolBar(
@@ -52,11 +57,6 @@ fun SettingsScreen(
             )
         },
         content = { innerPadding ->
-            val themeState by viewModel.themeState.collectAsState()
-            val aspectRatioState by viewModel.aspectRatioState.collectAsState()
-            val openAspectRationDialog = remember { mutableStateOf(false) }
-            val openAppThemeDialog = remember { mutableStateOf(false) }
-
             Column(
                 modifier = modifier
                     .padding(innerPadding)

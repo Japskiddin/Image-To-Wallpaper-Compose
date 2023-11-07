@@ -116,7 +116,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.exifinterface)
-    implementation(libs.cropper)
+    implementation(libs.cropify)
     implementation(libs.threadposter)
 
     implementation(libs.androidx.compose.material3)
