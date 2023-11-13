@@ -15,6 +15,6 @@ class DataStoreUtil @Inject constructor(context: Context) {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(APP_DATARSTORE)
 
         val KEY_THEME = intPreferencesKey("theme")
-        val KEY_ASPECT_RATIO = intPreferencesKey("aspect_ratio")
+        val KEY_CROP_RATIO = intPreferencesKey("crop_ratio")
     }
 }

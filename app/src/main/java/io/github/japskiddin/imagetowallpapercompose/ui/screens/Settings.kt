@@ -64,7 +64,7 @@ fun SettingsScreen(
             ) {
                 SettingsItem(
                     title = stringResource(id = R.string.aspect_ratio),
-                    description = aspectRatioState.aspectRatio.toString(),
+                    description = aspectRatioState.cropRatio.toString(),
                     onClick = {
                         openAspectRationDialog.value = true
                     }
@@ -92,7 +92,7 @@ fun SettingsScreen(
 
             if (openAspectRationDialog.value) {
                 AspectRatioDialog(
-                    aspectRatio = aspectRatioState.aspectRatio,
+                    cropRatio = aspectRatioState.cropRatio,
                     onDialogDismiss = { openAspectRationDialog.value = false },
                     onDialogConfirm = {
                         openAspectRationDialog.value = false

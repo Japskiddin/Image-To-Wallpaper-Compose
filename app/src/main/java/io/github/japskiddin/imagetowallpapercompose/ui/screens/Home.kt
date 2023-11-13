@@ -83,8 +83,8 @@ fun HomeScreen(
             CropifyOption(
                 backgroundColor = backgroundColor,
                 frameAspectRatio = AspectRatio(
-                    aspectRatioState.aspectRatio.width,
-                    aspectRatioState.aspectRatio.height
+                    aspectRatioState.cropRatio.width,
+                    aspectRatioState.cropRatio.height
                 ),
                 maskColor = backgroundColor
             )

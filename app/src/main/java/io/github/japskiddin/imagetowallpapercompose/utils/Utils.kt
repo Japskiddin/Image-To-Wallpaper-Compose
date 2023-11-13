@@ -6,7 +6,11 @@ import android.content.res.Resources
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
+import io.github.japskiddin.imagetowallpapercompose.AppTheme
 import io.github.japskiddin.imagetowallpapercompose.R
+import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 
 
 fun openFile(
@@ -35,4 +39,13 @@ fun getScreenWidth(): Int {
 
 fun getScreenHeight(): Int {
     return Resources.getSystem().displayMetrics.heightPixels
+}
+
+@Composable
+fun PreviewWithTheme(content: @Composable () -> Unit) {
+    val appTheme = if (isSystemInDarkTheme()) AppTheme.MODE_NIGHT else AppTheme.MODE_DAY
+    ImageToWallpaperTheme(
+        appTheme = appTheme,
+        content = content
+    )
 }

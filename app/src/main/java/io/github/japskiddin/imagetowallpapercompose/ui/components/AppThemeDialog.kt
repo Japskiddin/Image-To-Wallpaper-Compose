@@ -58,7 +58,7 @@ fun AppThemeDialog(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_night_mode),
+                painter = painterResource(id = R.drawable.ic_theme_night),
                 contentDescription = stringResource(id = R.string.app_theme),
                 modifier = modifier.size(24.dp)
             )

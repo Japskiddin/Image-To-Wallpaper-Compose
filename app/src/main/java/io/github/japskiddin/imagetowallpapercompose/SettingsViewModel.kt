@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.japskiddin.imagetowallpapercompose.utils.DataStoreUtil
-import io.github.japskiddin.imagetowallpapercompose.utils.DataStoreUtil.Companion.KEY_ASPECT_RATIO
+import io.github.japskiddin.imagetowallpapercompose.utils.DataStoreUtil.Companion.KEY_CROP_RATIO
 import io.github.japskiddin.imagetowallpapercompose.utils.DataStoreUtil.Companion.KEY_THEME
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class AspectRatio(val width: Int, val height: Int) {
+enum class CropRatio(val width: Int, val height: Int) {
     RATIO_4_TO_3(width = 4, height = 3),
     RATIO_3_TO_4(width = 3, height = 4),
     RATIO_16_TO_9(width = 16, height = 9),
@@ -45,32 +45,32 @@ enum class AppTheme {
 
 data class ThemeState(val theme: AppTheme)
 
-data class AspectRatioState(val aspectRatio: AspectRatio)
+data class AspectRatioState(val cropRatio: CropRatio)
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel() {
     private val _themeState = MutableStateFlow(ThemeState(AppTheme.MODE_DAY))
-    private val _aspectRatioState = MutableStateFlow(AspectRatioState(AspectRatio.RATIO_4_TO_3))
+    private val _cropRatioState = MutableStateFlow(AspectRatioState(CropRatio.RATIO_4_TO_3))
     val themeState: StateFlow<ThemeState> = _themeState
-    val aspectRatioState: StateFlow<AspectRatioState> = _aspectRatioState
+    val aspectRatioState: StateFlow<AspectRatioState> = _cropRatioState
 
     private val dataStore = dataStoreUtil.dataStore
 
     init {
         getAppTheme()
-        getAspectRatio()
+        getCropRatio()
     }
 
-    private fun getAspectRatio() {
+    private fun getCropRatio() {
         viewModelScope.launch(Dispatchers.IO) {
             dataStore.data.map { preferences ->
                 AspectRatioState(
-                    AspectRatio.fromOrdinal(
-                        preferences[KEY_ASPECT_RATIO] ?: AspectRatio.RATIO_4_TO_3.ordinal
+                    CropRatio.fromOrdinal(
+                        preferences[KEY_CROP_RATIO] ?: CropRatio.RATIO_4_TO_3.ordinal
                     )
                 )
             }.collect {
-                _aspectRatioState.value = it
+                _cropRatioState.value = it
             }
         }
     }
@@ -100,13 +100,13 @@ class SettingsViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : View
         }
     }
 
-    fun setAspectRatio(aspectRatio: AspectRatio) {
+    fun setAspectRatio(cropRatio: CropRatio) {
         viewModelScope.launch(Dispatchers.IO) {
             dataStore.edit { preferences ->
-                preferences[KEY_ASPECT_RATIO] = aspectRatio.ordinal
+                preferences[KEY_CROP_RATIO] = cropRatio.ordinal
             }
-            _aspectRatioState.update {
-                it.copy(aspectRatio = aspectRatio)
+            _cropRatioState.update {
+                it.copy(cropRatio = cropRatio)
             }
         }
     }

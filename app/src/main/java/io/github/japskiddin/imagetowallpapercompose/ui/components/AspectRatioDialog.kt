@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import io.github.japskiddin.imagetowallpapercompose.AspectRatio
+import io.github.japskiddin.imagetowallpapercompose.CropRatio
 import io.github.japskiddin.imagetowallpapercompose.R
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 
@@ -35,13 +35,13 @@ import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperThe
 
 @Composable
 fun AspectRatioDialog(
-    aspectRatio: AspectRatio,
+    cropRatio: CropRatio,
     onDialogDismiss: () -> Unit,
-    onDialogConfirm: (aspectRatio: AspectRatio) -> Unit,
+    onDialogConfirm: (cropRatio: CropRatio) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val aspectRatios = AspectRatio.entries.toTypedArray()
-    val selectedAspectRatio = remember { mutableStateOf(aspectRatio) }
+    val cropRatios = CropRatio.entries.toTypedArray()
+    val selectedAspectRatio = remember { mutableStateOf(cropRatio) }
 
     Dialog(
         onDismissRequest = { onDialogDismiss() },
@@ -74,9 +74,9 @@ fun AspectRatioDialog(
                     .selectableGroup()
                     .verticalScroll(rememberScrollState())
             ) {
-                aspectRatios.forEach { aspectRatio ->
-                    val isCustomAspectRatio = aspectRatio == AspectRatio.RATIO_CUSTOM
-                    val title = if (isCustomAspectRatio)
+                cropRatios.forEach { aspectRatio ->
+                    val isCustomCropRatio = aspectRatio == CropRatio.RATIO_CUSTOM
+                    val title = if (isCustomCropRatio)
                         stringResource(id = R.string.aspect_ratio_custom)
                     else
                         aspectRatio.toString()
@@ -114,7 +114,7 @@ fun AspectRatioDialog(
 fun AspectRatioDialogPreview() {
     ImageToWallpaperTheme {
         AspectRatioDialog(
-            aspectRatio = AspectRatio.RATIO_4_TO_3,
+            cropRatio = CropRatio.RATIO_4_TO_3,
             onDialogDismiss = {},
             onDialogConfirm = {}
         )

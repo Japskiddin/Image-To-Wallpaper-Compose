@@ -5,37 +5,49 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.japskiddin.imagetowallpapercompose.ui.components.MenuButton
+import io.github.japskiddin.imagetowallpapercompose.ui.components.OptionItem
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
+import io.github.japskiddin.imagetowallpapercompose.utils.PreviewWithTheme
 import io.github.japskiddin.imagetowallpapercompose.utils.hasPermission
 import io.github.japskiddin.imagetowallpapercompose.utils.openFile
 import io.github.japskiddin.imagetowallpapercompose.utils.requestPermission
@@ -55,12 +67,13 @@ fun ImageToWallpaperApp(
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
     ImageToWallpaperTheme {
+        val backgroundColor = MaterialTheme.colorScheme.background
+
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = backgroundColor
         ) {
             val context = LocalContext.current
-            val backgroundColor = MaterialTheme.colorScheme.background
             val aspectRatioState by settingsViewModel.aspectRatioState.collectAsState()
             val cropifyState = rememberCropifyState()
             val cropifyOption = remember {
@@ -68,8 +81,8 @@ fun ImageToWallpaperApp(
                     CropifyOption(
                         backgroundColor = backgroundColor,
                         frameAspectRatio = AspectRatio(
-                            aspectRatioState.aspectRatio.width,
-                            aspectRatioState.aspectRatio.height
+                            aspectRatioState.cropRatio.width,
+                            aspectRatioState.cropRatio.height
                         ),
                         maskColor = backgroundColor
                     )
@@ -114,7 +127,8 @@ fun ImageToWallpaperApp(
                 cropifyState = cropifyState,
                 cropifyOption = cropifyOption.value,
                 modifier = modifier,
-                onSelectImageClick = onSelectImageClick
+                onSelectImageClick = onSelectImageClick,
+                onChangeAppTheme = { settingsViewModel.setAppTheme(it) }
             )
         }
     }
@@ -126,25 +140,42 @@ fun ImageToWallpaperAppContent(
     imageUri: Uri? = null,
     cropifyState: CropifyState = CropifyState(),
     cropifyOption: CropifyOption = CropifyOption(),
-    onSelectImageClick: () -> Unit = {}
+    onSelectImageClick: () -> Unit = {},
+    onChangeAppTheme: (AppTheme) -> Unit = {}
 ) {
     val context = LocalContext.current
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    if (showBottomSheet) {
+        BottomSheet(
+            onDismiss = { showBottomSheet = false },
+            onChangeAppTheme = onChangeAppTheme
+        )
+    }
 
     Scaffold(
         topBar = {
             ToolBar(
-                onSettingsClick = { },
+                onOptionsClick = { showBottomSheet = true },
                 modifier = modifier
             )
         },
-        content = { innerPadding ->
+        content = {
             Column(
-                modifier = modifier.padding(innerPadding)
+                modifier = modifier
+                    .padding(it)
+                    .fillMaxSize()
             )
             {
-                imageUri?.let {
+                if (imageUri == null) {
+                    Spacer(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    )
+                } else {
                     Cropify(
-                        uri = it,
+                        uri = imageUri,
                         state = cropifyState,
                         option = cropifyOption,
                         onImageCropped = {},
@@ -161,11 +192,6 @@ fun ImageToWallpaperAppContent(
                     )
                 }
 
-                Spacer(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
                 Row(
                     modifier = modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
@@ -187,14 +213,97 @@ fun ImageToWallpaperAppContent(
 }
 
 @Composable
+fun BottomSheet(
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit,
+    onChangeAppTheme: (AppTheme) -> Unit
+) {
+    val bottomSheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = { onDismiss() },
+        sheetState = bottomSheetState,
+        dragHandle = { BottomSheetDefaults.DragHandle() }
+    ) {
+        Options(modifier = modifier, onChangeAppTheme = onChangeAppTheme)
+    }
+}
+
+@Composable
+fun Options(
+    modifier: Modifier = Modifier,
+    onChangeCropRatio: (CropRatio) -> Unit = {},
+    onChangeAppTheme: (AppTheme) -> Unit = {}
+) {
+    val appThemes = AppTheme.entries.toTypedArray()
+    val cropRations = CropRatio.entries.toTypedArray()
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+    ) {
+        Text(
+            text = stringResource(id = R.string.app_theme),
+            style = MaterialTheme.typography.titleLarge
+        )
+        Spacer(modifier = modifier.height(8.dp))
+        Row(modifier = modifier.horizontalScroll(rememberScrollState())) {
+            appThemes.forEach { appTheme ->
+                val title = when (appTheme) {
+                    AppTheme.MODE_DAY -> R.string.app_theme_day
+                    AppTheme.MODE_NIGHT -> R.string.app_theme_night
+                    else -> R.string.app_theme_system
+                }
+                val icon = when (appTheme) {
+                    AppTheme.MODE_DAY -> R.drawable.ic_theme_day
+                    AppTheme.MODE_NIGHT -> R.drawable.ic_theme_night
+                    else -> R.drawable.ic_theme_auto
+                }
+                OptionItem(
+                    titleId = title,
+                    iconId = icon,
+                    onClick = {
+                        onChangeAppTheme(appTheme)
+                    })
+            }
+        }
+        Spacer(modifier = modifier.height(16.dp))
+        Text(
+            text = stringResource(id = R.string.aspect_ratio),
+            style = MaterialTheme.typography.titleLarge
+        )
+        Spacer(modifier = modifier.height(8.dp))
+        Row(modifier = modifier.horizontalScroll(rememberScrollState())) {
+            cropRations.forEach { cropRatio ->
+                val isCustomCropRatio = cropRatio == CropRatio.RATIO_CUSTOM
+                val title = if (isCustomCropRatio)
+                    stringResource(id = R.string.aspect_ratio_custom)
+                else
+                    cropRatio.toString()
+                OptionItem(
+                    title = title,
+                    iconId = R.drawable.ic_theme_night,
+                    onClick = {
+                        onChangeCropRatio(cropRatio)
+                    })
+            }
+        }
+    }
+}
+
+@Composable
 private fun ToolBar(
-    onSettingsClick: () -> Unit,
+    onOptionsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
         actions = {
-            IconButton(onClick = onSettingsClick) {
+            IconButton(onClick = onOptionsClick) {
                 Icon(
                     imageVector = Icons.Rounded.Settings,
                     contentDescription = stringResource(id = R.string.settings),
@@ -213,21 +322,24 @@ private fun ToolBar(
 
 @Preview(
     name = "App Light mode",
-    showBackground = true,
-    showSystemUi = true
+    showBackground = true
 )
 @Preview(
     name = "App Dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true,
-    showSystemUi = true
+    showBackground = true
 )
 @Composable
 fun AppScreenPreview() {
-    val appTheme = if (isSystemInDarkTheme()) AppTheme.MODE_NIGHT else AppTheme.MODE_DAY
-    ImageToWallpaperTheme(
-        appTheme = appTheme
-    ) {
+    PreviewWithTheme {
         ImageToWallpaperAppContent()
+    }
+}
+
+@Preview(name = "Options", showBackground = true)
+@Composable
+fun OptionsPreview() {
+    PreviewWithTheme {
+        Options()
     }
 }
