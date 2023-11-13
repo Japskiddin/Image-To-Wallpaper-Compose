@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.github.japskiddin.imagetowallpapercompose.AppTheme
 import io.github.japskiddin.imagetowallpapercompose.CropViewModel
 import io.github.japskiddin.imagetowallpapercompose.R
 import io.github.japskiddin.imagetowallpapercompose.SettingsViewModel
@@ -213,7 +215,10 @@ private fun ToolBar(
 )
 @Composable
 fun HomeScreenPreview() {
-    ImageToWallpaperTheme {
+    val appTheme = if (isSystemInDarkTheme()) AppTheme.MODE_NIGHT else AppTheme.MODE_DAY
+    ImageToWallpaperTheme(
+        appTheme = appTheme
+    ) {
         HomeScreen(onSettingsClick = {})
     }
 }

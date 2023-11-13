@@ -46,7 +46,20 @@ fun ImageToWallpaperTheme(
 ) {
     val themeState by viewModel.themeState.collectAsState()
 
-    val colorScheme = when (themeState.theme) {
+    ImageToWallpaperTheme(
+        appTheme = themeState.theme,
+        dynamicColor = dynamicColor,
+        content = content
+    )
+}
+
+@Composable
+fun ImageToWallpaperTheme(
+    appTheme: AppTheme,
+    dynamicColor: Boolean = false,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = when (appTheme) {
         AppTheme.MODE_SYSTEM -> {
             val isSystemNightMode = isSystemInDarkTheme()
             if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
