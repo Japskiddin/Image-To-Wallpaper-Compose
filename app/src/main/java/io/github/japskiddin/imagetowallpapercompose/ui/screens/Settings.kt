@@ -34,7 +34,7 @@ import io.github.japskiddin.imagetowallpapercompose.SettingsViewModel
 import io.github.japskiddin.imagetowallpapercompose.ui.components.AppThemeDialog
 import io.github.japskiddin.imagetowallpapercompose.ui.components.AspectRatioDialog
 import io.github.japskiddin.imagetowallpapercompose.ui.components.SettingsItem
-import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
+import io.github.japskiddin.imagetowallpapercompose.utils.PreviewWithTheme
 
 // TODO: add version
 
@@ -154,7 +154,7 @@ private fun ToolBar(
 )
 @Composable
 fun SettingsScreenPreview() {
-    ImageToWallpaperTheme(dynamicColor = false) {
+    PreviewWithTheme {
         SettingsScreen(onNavigateUp = {})
     }
 }

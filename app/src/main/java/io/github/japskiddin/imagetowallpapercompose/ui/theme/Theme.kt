@@ -10,15 +10,11 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.japskiddin.imagetowallpapercompose.AppTheme
-import io.github.japskiddin.imagetowallpapercompose.SettingsViewModel
 
 private val DarkColorScheme = darkColorScheme(
     primary = BlueEyes,
@@ -40,23 +36,8 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun ImageToWallpaperTheme(
-    viewModel: SettingsViewModel = hiltViewModel(),
-    dynamicColor: Boolean = false,
-    content: @Composable () -> Unit
-) {
-    val themeState by viewModel.themeState.collectAsState()
-
-    ImageToWallpaperTheme(
-        appTheme = themeState.theme,
-        dynamicColor = dynamicColor,
-        content = content
-    )
-}
-
-@Composable
-fun ImageToWallpaperTheme(
     appTheme: AppTheme,
-    dynamicColor: Boolean = false,
+    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when (appTheme) {

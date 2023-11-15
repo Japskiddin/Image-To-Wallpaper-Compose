@@ -67,7 +67,9 @@ fun ImageToWallpaperApp(
     cropViewModel: CropViewModel = viewModel(),
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
-    ImageToWallpaperTheme {
+    val themeState by settingsViewModel.themeState.collectAsState()
+
+    ImageToWallpaperTheme(appTheme = themeState.theme) {
         val backgroundColor = MaterialTheme.colorScheme.background
 
         Surface(

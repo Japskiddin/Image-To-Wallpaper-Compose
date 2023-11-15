@@ -29,7 +29,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import io.github.japskiddin.imagetowallpapercompose.CropRatio
 import io.github.japskiddin.imagetowallpapercompose.R
-import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
+import io.github.japskiddin.imagetowallpapercompose.utils.PreviewWithTheme
 
 // https://stackoverflow.com/questions/68852110/show-custom-alert-dialog-in-jetpack-compose
 
@@ -112,7 +112,7 @@ fun AspectRatioDialog(
 @Preview
 @Composable
 fun AspectRatioDialogPreview() {
-    ImageToWallpaperTheme {
+    PreviewWithTheme {
         AspectRatioDialog(
             cropRatio = CropRatio.RATIO_4_TO_3,
             onDialogDismiss = {},

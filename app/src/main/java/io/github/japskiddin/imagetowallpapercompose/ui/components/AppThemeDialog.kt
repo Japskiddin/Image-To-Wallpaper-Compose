@@ -29,7 +29,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import io.github.japskiddin.imagetowallpapercompose.AppTheme
 import io.github.japskiddin.imagetowallpapercompose.R
-import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
+import io.github.japskiddin.imagetowallpapercompose.utils.PreviewWithTheme
 
 // https://stackoverflow.com/questions/68852110/show-custom-alert-dialog-in-jetpack-compose
 
@@ -112,7 +112,7 @@ fun AppThemeDialog(
 @Preview
 @Composable
 fun AppThemeDialogPreview() {
-    ImageToWallpaperTheme {
+    PreviewWithTheme {
         AppThemeDialog(
             appTheme = AppTheme.MODE_DAY,
             onDialogDismiss = {},

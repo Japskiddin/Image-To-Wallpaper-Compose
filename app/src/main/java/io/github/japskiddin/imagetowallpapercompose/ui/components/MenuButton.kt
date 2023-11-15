@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.japskiddin.imagetowallpapercompose.R
-import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
+import io.github.japskiddin.imagetowallpapercompose.utils.PreviewWithTheme
 
 @Composable
 fun MenuButton(icon: Int, desc: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
@@ -37,7 +37,7 @@ fun MenuButton(icon: Int, desc: Int, onClick: () -> Unit, modifier: Modifier = M
 @Preview
 @Composable
 fun MenuButtonPreview() {
-    ImageToWallpaperTheme(dynamicColor = false) {
+    PreviewWithTheme {
         MenuButton(
             icon = R.drawable.ic_gallery,
             desc = R.string.select_image,
