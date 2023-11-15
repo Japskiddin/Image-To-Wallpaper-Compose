@@ -39,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -264,8 +265,8 @@ fun Options(
                     else -> R.drawable.ic_theme_auto
                 }
                 OptionItem(
-                    titleId = title,
-                    iconId = icon,
+                    title = stringResource(id = title),
+                    icon = painterResource(id = icon),
                     onClick = {
                         onChangeAppTheme(appTheme)
                     })
@@ -286,7 +287,7 @@ fun Options(
                     cropRatio.toString()
                 OptionItem(
                     title = title,
-                    iconId = R.drawable.ic_theme_night,
+                    icon = painterResource(id = R.drawable.ic_theme_night),
                     onClick = {
                         onChangeCropRatio(cropRatio)
                     })
