@@ -44,7 +44,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.japskiddin.imagetowallpapercompose.ui.components.MenuButton
 import io.github.japskiddin.imagetowallpapercompose.ui.components.OptionItem
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
@@ -64,10 +63,9 @@ import io.moyuru.cropify.rememberCropifyState
 @Composable
 fun ImageToWallpaperApp(
     modifier: Modifier = Modifier,
-    cropViewModel: CropViewModel = viewModel(),
-    settingsViewModel: SettingsViewModel = hiltViewModel()
+    viewModel: AppViewModel = hiltViewModel()
 ) {
-    val themeState by settingsViewModel.themeState.collectAsState()
+    val themeState by viewModel.themeState.collectAsState()
 
     ImageToWallpaperTheme(appTheme = themeState.theme) {
         val backgroundColor = MaterialTheme.colorScheme.background
@@ -77,7 +75,7 @@ fun ImageToWallpaperApp(
             color = backgroundColor
         ) {
             val context = LocalContext.current
-            val aspectRatioState by settingsViewModel.aspectRatioState.collectAsState()
+            val aspectRatioState by viewModel.cropRatioState.collectAsState()
             val cropifyState = rememberCropifyState()
             val cropifyOption = remember {
                 mutableStateOf(
@@ -92,15 +90,15 @@ fun ImageToWallpaperApp(
                 )
             }
 
-            val imageUri by cropViewModel.imageUriState.collectAsState()
+            val imageUri by viewModel.imageUriState.collectAsState()
 
             val openDocumentLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.OpenDocument(),
-                onResult = { uri -> uri?.let { cropViewModel.setImageUri(it) } }
+                onResult = { uri -> uri?.let { viewModel.setImageUri(it) } }
             )
             val getContentLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.GetContent(),
-                onResult = { uri -> uri?.let { cropViewModel.setImageUri(it) } }
+                onResult = { uri -> uri?.let { viewModel.setImageUri(it) } }
             )
             val requestPermissionLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.RequestPermission(),
@@ -131,7 +129,7 @@ fun ImageToWallpaperApp(
                 cropifyOption = cropifyOption.value,
                 modifier = modifier,
                 onSelectImageClick = onSelectImageClick,
-                onChangeAppTheme = { settingsViewModel.setAppTheme(it) }
+                onChangeAppTheme = { viewModel.setAppTheme(it) }
             )
         }
     }

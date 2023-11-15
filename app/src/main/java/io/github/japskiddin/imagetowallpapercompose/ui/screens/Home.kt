@@ -31,11 +31,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.japskiddin.imagetowallpapercompose.AppTheme
-import io.github.japskiddin.imagetowallpapercompose.CropViewModel
+import io.github.japskiddin.imagetowallpapercompose.AppViewModel
 import io.github.japskiddin.imagetowallpapercompose.R
-import io.github.japskiddin.imagetowallpapercompose.SettingsViewModel
 import io.github.japskiddin.imagetowallpapercompose.ui.components.MenuButton
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 import io.github.japskiddin.imagetowallpapercompose.utils.hasPermission
@@ -70,13 +68,12 @@ import io.moyuru.cropify.rememberCropifyState
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    cropViewModel: CropViewModel = viewModel(),
-    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    appViewModel: AppViewModel = hiltViewModel(),
     onSettingsClick: () -> Unit
 ) {
     val context = LocalContext.current
     val backgroundColor = MaterialTheme.colorScheme.background
-    val aspectRatioState by settingsViewModel.aspectRatioState.collectAsState()
+    val aspectRatioState by appViewModel.cropRatioState.collectAsState()
     val cropifyState = rememberCropifyState()
     val cropifyOption = remember {
         mutableStateOf(
@@ -91,15 +88,15 @@ fun HomeScreen(
         )
     }
 
-    val imageUri by cropViewModel.imageUriState.collectAsState()
+    val imageUri by appViewModel.imageUriState.collectAsState()
 
     val openDocumentLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
-        onResult = { uri -> uri?.let { cropViewModel.setImageUri(it) } }
+        onResult = { uri -> uri?.let { appViewModel.setImageUri(it) } }
     )
     val getContentLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
-        onResult = { uri -> uri?.let { cropViewModel.setImageUri(it) } }
+        onResult = { uri -> uri?.let { appViewModel.setImageUri(it) } }
     )
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),

@@ -1,5 +1,6 @@
 package io.github.japskiddin.imagetowallpapercompose
 
+import android.net.Uri
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -45,14 +46,16 @@ enum class AppTheme {
 
 data class ThemeState(val theme: AppTheme)
 
-data class AspectRatioState(val cropRatio: CropRatio)
+data class CropRatioState(val cropRatio: CropRatio)
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel() {
+class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel() {
     private val _themeState = MutableStateFlow(ThemeState(AppTheme.MODE_DAY))
-    private val _cropRatioState = MutableStateFlow(AspectRatioState(CropRatio.RATIO_4_TO_3))
+    private val _cropRatioState = MutableStateFlow(CropRatioState(CropRatio.RATIO_4_TO_3))
+    private val _imageUriState = MutableStateFlow<Uri?>(null)
+    val imageUriState: StateFlow<Uri?> = _imageUriState
     val themeState: StateFlow<ThemeState> = _themeState
-    val aspectRatioState: StateFlow<AspectRatioState> = _cropRatioState
+    val cropRatioState: StateFlow<CropRatioState> = _cropRatioState
 
     private val dataStore = dataStoreUtil.dataStore
 
@@ -61,10 +64,38 @@ class SettingsViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : View
         getCropRatio()
     }
 
+    fun setAppTheme(appTheme: AppTheme) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStore.edit { preferences ->
+                preferences[KEY_THEME] = appTheme.ordinal
+            }
+            _themeState.update {
+                it.copy(theme = appTheme)
+            }
+        }
+    }
+
+    fun setCropRatio(cropRatio: CropRatio) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStore.edit { preferences ->
+                preferences[KEY_CROP_RATIO] = cropRatio.ordinal
+            }
+            _cropRatioState.update {
+                it.copy(cropRatio = cropRatio)
+            }
+        }
+    }
+
+    fun setImageUri(uri: Uri) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _imageUriState.update { uri }
+        }
+    }
+
     private fun getCropRatio() {
         viewModelScope.launch(Dispatchers.IO) {
             dataStore.data.map { preferences ->
-                AspectRatioState(
+                CropRatioState(
                     CropRatio.fromOrdinal(
                         preferences[KEY_CROP_RATIO] ?: CropRatio.RATIO_4_TO_3.ordinal
                     )
@@ -85,28 +116,6 @@ class SettingsViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : View
                 )
             }.collect {
                 _themeState.value = it
-            }
-        }
-    }
-
-    fun setAppTheme(appTheme: AppTheme) {
-        viewModelScope.launch(Dispatchers.IO) {
-            dataStore.edit { preferences ->
-                preferences[KEY_THEME] = appTheme.ordinal
-            }
-            _themeState.update {
-                it.copy(theme = appTheme)
-            }
-        }
-    }
-
-    fun setAspectRatio(cropRatio: CropRatio) {
-        viewModelScope.launch(Dispatchers.IO) {
-            dataStore.edit { preferences ->
-                preferences[KEY_CROP_RATIO] = cropRatio.ordinal
-            }
-            _cropRatioState.update {
-                it.copy(cropRatio = cropRatio)
             }
         }
     }

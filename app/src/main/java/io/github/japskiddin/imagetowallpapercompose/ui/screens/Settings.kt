@@ -29,8 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.japskiddin.imagetowallpapercompose.AppTheme
+import io.github.japskiddin.imagetowallpapercompose.AppViewModel
 import io.github.japskiddin.imagetowallpapercompose.R
-import io.github.japskiddin.imagetowallpapercompose.SettingsViewModel
 import io.github.japskiddin.imagetowallpapercompose.ui.components.AppThemeDialog
 import io.github.japskiddin.imagetowallpapercompose.ui.components.AspectRatioDialog
 import io.github.japskiddin.imagetowallpapercompose.ui.components.SettingsItem
@@ -42,10 +42,10 @@ import io.github.japskiddin.imagetowallpapercompose.utils.PreviewWithTheme
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     onNavigateUp: () -> Unit,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: AppViewModel = hiltViewModel()
 ) {
     val themeState by viewModel.themeState.collectAsState()
-    val aspectRatioState by viewModel.aspectRatioState.collectAsState()
+    val aspectRatioState by viewModel.cropRatioState.collectAsState()
     val openAspectRationDialog = remember { mutableStateOf(false) }
     val openAppThemeDialog = remember { mutableStateOf(false) }
 
@@ -96,7 +96,7 @@ fun SettingsScreen(
                     onDialogDismiss = { openAspectRationDialog.value = false },
                     onDialogConfirm = {
                         openAspectRationDialog.value = false
-                        viewModel.setAspectRatio(it)
+                        viewModel.setCropRatio(it)
                     },
                     modifier = modifier
                 )
