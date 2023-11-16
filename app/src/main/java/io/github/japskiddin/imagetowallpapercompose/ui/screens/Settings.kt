@@ -45,7 +45,7 @@ fun SettingsScreen(
     viewModel: AppViewModel = hiltViewModel()
 ) {
     val themeState by viewModel.themeState.collectAsState()
-    val aspectRatioState by viewModel.cropRatioState.collectAsState()
+    val cropState by viewModel.cropState.collectAsState()
     val openAspectRationDialog = remember { mutableStateOf(false) }
     val openAppThemeDialog = remember { mutableStateOf(false) }
 
@@ -64,7 +64,7 @@ fun SettingsScreen(
             ) {
                 SettingsItem(
                     title = stringResource(id = R.string.aspect_ratio),
-                    description = aspectRatioState.cropRatio.toString(),
+                    description = cropState.cropRatio.toString(),
                     onClick = {
                         openAspectRationDialog.value = true
                     }
@@ -92,7 +92,7 @@ fun SettingsScreen(
 
             if (openAspectRationDialog.value) {
                 AspectRatioDialog(
-                    cropRatio = aspectRatioState.cropRatio,
+                    cropRatio = cropState.cropRatio,
                     onDialogDismiss = { openAspectRationDialog.value = false },
                     onDialogConfirm = {
                         openAspectRationDialog.value = false

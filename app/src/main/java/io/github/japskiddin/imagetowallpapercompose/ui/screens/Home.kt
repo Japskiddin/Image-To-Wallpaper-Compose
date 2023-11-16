@@ -73,22 +73,20 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val backgroundColor = MaterialTheme.colorScheme.background
-    val aspectRatioState by appViewModel.cropRatioState.collectAsState()
+    val cropState by appViewModel.cropState.collectAsState()
     val cropifyState = rememberCropifyState()
     val cropifyOption = remember {
         mutableStateOf(
             CropifyOption(
                 backgroundColor = backgroundColor,
                 frameAspectRatio = AspectRatio(
-                    aspectRatioState.cropRatio.width,
-                    aspectRatioState.cropRatio.height
+                    cropState.cropRatio.width,
+                    cropState.cropRatio.height
                 ),
                 maskColor = backgroundColor
             )
         )
     }
-
-    val imageUri by appViewModel.imageUriState.collectAsState()
 
     val openDocumentLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
@@ -125,7 +123,7 @@ fun HomeScreen(
                 modifier = modifier.padding(innerPadding)
             )
             {
-                imageUri?.let {
+                cropState.imageUri?.let {
                     Cropify(
                         uri = it,
                         state = cropifyState,

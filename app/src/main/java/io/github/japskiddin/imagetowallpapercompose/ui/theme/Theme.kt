@@ -51,9 +51,9 @@ fun ImageToWallpaperTheme(
                     dynamicLightColorScheme(context)
             } else {
                 if (isSystemNightMode) {
-                    darkColorScheme()
+                    DarkColorScheme
                 } else {
-                    lightColorScheme()
+                    LightColorScheme
                 }
             }
         }

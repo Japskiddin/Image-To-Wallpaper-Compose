@@ -46,16 +46,14 @@ enum class AppTheme {
 
 data class ThemeState(val theme: AppTheme)
 
-data class CropRatioState(val cropRatio: CropRatio)
+data class CropState(val cropRatio: CropRatio = CropRatio.RATIO_4_TO_3, val imageUri: Uri? = null)
 
 @HiltViewModel
 class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel() {
     private val _themeState = MutableStateFlow(ThemeState(AppTheme.MODE_DAY))
-    private val _cropRatioState = MutableStateFlow(CropRatioState(CropRatio.RATIO_4_TO_3))
-    private val _imageUriState = MutableStateFlow<Uri?>(null)
-    val imageUriState: StateFlow<Uri?> = _imageUriState
+    private val _cropState = MutableStateFlow(CropState())
     val themeState: StateFlow<ThemeState> = _themeState
-    val cropRatioState: StateFlow<CropRatioState> = _cropRatioState
+    val cropState: StateFlow<CropState> = _cropState
 
     private val dataStore = dataStoreUtil.dataStore
 
@@ -80,7 +78,7 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
             dataStore.edit { preferences ->
                 preferences[KEY_CROP_RATIO] = cropRatio.ordinal
             }
-            _cropRatioState.update {
+            _cropState.update {
                 it.copy(cropRatio = cropRatio)
             }
         }
@@ -88,20 +86,22 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
 
     fun setImageUri(uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
-            _imageUriState.update { uri }
+            _cropState.update {
+                it.copy(imageUri = uri)
+            }
         }
     }
 
     private fun getCropRatio() {
         viewModelScope.launch(Dispatchers.IO) {
             dataStore.data.map { preferences ->
-                CropRatioState(
+                CropState(
                     CropRatio.fromOrdinal(
                         preferences[KEY_CROP_RATIO] ?: CropRatio.RATIO_4_TO_3.ordinal
                     )
                 )
             }.collect {
-                _cropRatioState.value = it
+                _cropState.value = it
             }
         }
     }

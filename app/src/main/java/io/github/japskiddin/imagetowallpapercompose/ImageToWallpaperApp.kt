@@ -75,22 +75,20 @@ fun ImageToWallpaperApp(
             color = backgroundColor
         ) {
             val context = LocalContext.current
-            val aspectRatioState by viewModel.cropRatioState.collectAsState()
+            val cropState by viewModel.cropState.collectAsState()
             val cropifyState = rememberCropifyState()
             val cropifyOption = remember {
                 mutableStateOf(
                     CropifyOption(
                         backgroundColor = backgroundColor,
                         frameAspectRatio = AspectRatio(
-                            aspectRatioState.cropRatio.width,
-                            aspectRatioState.cropRatio.height
+                            cropState.cropRatio.width,
+                            cropState.cropRatio.height
                         ),
                         maskColor = backgroundColor
                     )
                 )
             }
-
-            val imageUri by viewModel.imageUriState.collectAsState()
 
             val openDocumentLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.OpenDocument(),
@@ -124,7 +122,7 @@ fun ImageToWallpaperApp(
             }
 
             ImageToWallpaperAppContent(
-                imageUri = imageUri,
+                imageUri = cropState.imageUri,
                 cropifyState = cropifyState,
                 cropifyOption = cropifyOption.value,
                 modifier = modifier,
@@ -193,24 +191,32 @@ fun ImageToWallpaperAppContent(
                     )
                 }
 
-                Row(
-                    modifier = modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    MenuButton(
-                        icon = R.drawable.ic_wallpaper,
-                        desc = R.string.set_wallpaper,
-                        onClick = {/*TODO*/ })
-                    MenuButton(
-                        icon = R.drawable.ic_gallery,
-                        desc = R.string.select_image,
-                        onClick = onSelectImageClick
-                    )
-                }
+                Menu(
+                    modifier = modifier.padding(bottom = 8.dp),
+                    onSelectImageClick = onSelectImageClick
+                )
             }
         },
         modifier = modifier.fillMaxSize()
     )
+}
+
+@Composable
+fun Menu(modifier: Modifier = Modifier, onSelectImageClick: () -> Unit) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        MenuButton(
+            icon = R.drawable.ic_wallpaper,
+            desc = R.string.set_wallpaper,
+            onClick = {/*TODO*/ })
+        MenuButton(
+            icon = R.drawable.ic_gallery,
+            desc = R.string.select_image,
+            onClick = onSelectImageClick
+        )
+    }
 }
 
 @Composable
