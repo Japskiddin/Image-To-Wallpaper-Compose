@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,7 +55,6 @@ import io.github.japskiddin.imagetowallpapercompose.utils.requestPermission
 import io.moyuru.cropify.AspectRatio
 import io.moyuru.cropify.Cropify
 import io.moyuru.cropify.CropifyOption
-import io.moyuru.cropify.CropifyState
 import io.moyuru.cropify.rememberCropifyState
 
 // https://developer.android.com/codelabs/basic-android-kotlin-compose-navigation?continue=https%3A%2F%2Fdeveloper.android.com%2Fcourses%2Fpathways%2Fandroid-basics-compose-unit-4-pathway-2%23codelab-https%3A%2F%2Fdeveloper.android.com%2Fcodelabs%2Fbasic-android-kotlin-compose-navigation#6
@@ -65,30 +65,15 @@ fun ImageToWallpaperApp(
     modifier: Modifier = Modifier,
     viewModel: AppViewModel = hiltViewModel()
 ) {
-    val themeState by viewModel.themeState.collectAsState()
+    val settingsState by viewModel.settingsState.collectAsState()
 
-    ImageToWallpaperTheme(appTheme = themeState.theme) {
-        val backgroundColor = MaterialTheme.colorScheme.background
-
+    ImageToWallpaperTheme(appTheme = settingsState.theme) {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = backgroundColor
+            color = MaterialTheme.colorScheme.background
         ) {
             val context = LocalContext.current
-            val cropState by viewModel.cropState.collectAsState()
-            val cropifyState = rememberCropifyState()
-            val cropifyOption = remember {
-                mutableStateOf(
-                    CropifyOption(
-                        backgroundColor = backgroundColor,
-                        frameAspectRatio = AspectRatio(
-                            cropState.cropRatio.width,
-                            cropState.cropRatio.height
-                        ),
-                        maskColor = backgroundColor
-                    )
-                )
-            }
+            val imageUri by viewModel.imageUri.collectAsState()
 
             val openDocumentLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.OpenDocument(),
@@ -122,10 +107,9 @@ fun ImageToWallpaperApp(
             }
 
             ImageToWallpaperAppContent(
-                imageUri = cropState.imageUri,
-                cropifyState = cropifyState,
-                cropifyOption = cropifyOption.value,
                 modifier = modifier,
+                settingsState = settingsState,
+                imageUri = imageUri,
                 onSelectImageClick = onSelectImageClick,
                 onChangeAppTheme = { viewModel.setAppTheme(it) }
             )
@@ -136,13 +120,25 @@ fun ImageToWallpaperApp(
 @Composable
 fun ImageToWallpaperAppContent(
     modifier: Modifier = Modifier,
+    settingsState: SettingsState = SettingsState(),
     imageUri: Uri? = null,
-    cropifyState: CropifyState = CropifyState(),
-    cropifyOption: CropifyOption = CropifyOption(),
     onSelectImageClick: () -> Unit = {},
     onChangeAppTheme: (AppTheme) -> Unit = {}
 ) {
     val context = LocalContext.current
+    val cropifyState = rememberCropifyState()
+    val cropifyOption = remember {
+        mutableStateOf(
+            CropifyOption(
+                backgroundColor = Color.Transparent,
+                frameAspectRatio = AspectRatio(
+                    settingsState.cropRatio.width,
+                    settingsState.cropRatio.height
+                ),
+                maskColor = Color.Transparent
+            )
+        )
+    }
     var showBottomSheet by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
@@ -166,6 +162,7 @@ fun ImageToWallpaperAppContent(
                     .fillMaxSize()
             )
             {
+                val imageUri = imageUri
                 if (imageUri == null) {
                     Spacer(
                         modifier = modifier
@@ -176,7 +173,7 @@ fun ImageToWallpaperAppContent(
                     Cropify(
                         uri = imageUri,
                         state = cropifyState,
-                        option = cropifyOption,
+                        option = cropifyOption.value,
                         onImageCropped = {},
                         onFailedToLoadImage = {
                             Toast.makeText(

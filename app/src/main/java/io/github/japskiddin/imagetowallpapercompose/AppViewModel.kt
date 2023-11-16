@@ -44,22 +44,22 @@ enum class AppTheme {
     }
 }
 
-data class ThemeState(val theme: AppTheme)
-
-data class CropState(val cropRatio: CropRatio = CropRatio.RATIO_4_TO_3, val imageUri: Uri? = null)
+data class SettingsState(
+    val theme: AppTheme = AppTheme.MODE_SYSTEM,
+    val cropRatio: CropRatio = CropRatio.RATIO_4_TO_3
+)
 
 @HiltViewModel
 class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel() {
-    private val _themeState = MutableStateFlow(ThemeState(AppTheme.MODE_DAY))
-    private val _cropState = MutableStateFlow(CropState())
-    val themeState: StateFlow<ThemeState> = _themeState
-    val cropState: StateFlow<CropState> = _cropState
-
     private val dataStore = dataStoreUtil.dataStore
 
+    private val _settingsState = MutableStateFlow(SettingsState())
+    private val _imageUri = MutableStateFlow<Uri?>(null)
+    val imageUri: StateFlow<Uri?> = _imageUri
+    val settingsState: StateFlow<SettingsState> = _settingsState
+
     init {
-        getAppTheme()
-        getCropRatio()
+        getSettings()
     }
 
     fun setAppTheme(appTheme: AppTheme) {
@@ -67,7 +67,7 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
             dataStore.edit { preferences ->
                 preferences[KEY_THEME] = appTheme.ordinal
             }
-            _themeState.update {
+            _settingsState.update {
                 it.copy(theme = appTheme)
             }
         }
@@ -78,7 +78,7 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
             dataStore.edit { preferences ->
                 preferences[KEY_CROP_RATIO] = cropRatio.ordinal
             }
-            _cropState.update {
+            _settingsState.update {
                 it.copy(cropRatio = cropRatio)
             }
         }
@@ -86,36 +86,23 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
 
     fun setImageUri(uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
-            _cropState.update {
-                it.copy(imageUri = uri)
-            }
+            _imageUri.update { uri }
         }
     }
 
-    private fun getCropRatio() {
+    private fun getSettings() {
         viewModelScope.launch(Dispatchers.IO) {
             dataStore.data.map { preferences ->
-                CropState(
-                    CropRatio.fromOrdinal(
+                SettingsState(
+                    theme = AppTheme.fromOrdinal(
+                        preferences[KEY_THEME] ?: AppTheme.MODE_DAY.ordinal
+                    ),
+                    cropRatio = CropRatio.fromOrdinal(
                         preferences[KEY_CROP_RATIO] ?: CropRatio.RATIO_4_TO_3.ordinal
                     )
                 )
             }.collect {
-                _cropState.value = it
-            }
-        }
-    }
-
-    private fun getAppTheme() {
-        viewModelScope.launch(Dispatchers.IO) {
-            dataStore.data.map { preferences ->
-                ThemeState(
-                    AppTheme.fromOrdinal(
-                        preferences[KEY_THEME] ?: AppTheme.MODE_DAY.ordinal
-                    )
-                )
-            }.collect {
-                _themeState.value = it
+                _settingsState.value = it
             }
         }
     }

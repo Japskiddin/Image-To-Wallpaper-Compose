@@ -44,8 +44,7 @@ fun SettingsScreen(
     onNavigateUp: () -> Unit,
     viewModel: AppViewModel = hiltViewModel()
 ) {
-    val themeState by viewModel.themeState.collectAsState()
-    val cropState by viewModel.cropState.collectAsState()
+    val settingsState by viewModel.settingsState.collectAsState()
     val openAspectRationDialog = remember { mutableStateOf(false) }
     val openAppThemeDialog = remember { mutableStateOf(false) }
 
@@ -64,7 +63,7 @@ fun SettingsScreen(
             ) {
                 SettingsItem(
                     title = stringResource(id = R.string.aspect_ratio),
-                    description = cropState.cropRatio.toString(),
+                    description = settingsState.cropRatio.toString(),
                     onClick = {
                         openAspectRationDialog.value = true
                     }
@@ -78,7 +77,7 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(id = R.string.app_theme),
                     description = stringResource(
-                        id = when (themeState.theme) {
+                        id = when (settingsState.theme) {
                             AppTheme.MODE_DAY -> R.string.app_theme_day
                             AppTheme.MODE_NIGHT -> R.string.app_theme_night
                             AppTheme.MODE_SYSTEM -> R.string.app_theme_system
@@ -92,7 +91,7 @@ fun SettingsScreen(
 
             if (openAspectRationDialog.value) {
                 AspectRatioDialog(
-                    cropRatio = cropState.cropRatio,
+                    cropRatio = settingsState.cropRatio,
                     onDialogDismiss = { openAspectRationDialog.value = false },
                     onDialogConfirm = {
                         openAspectRationDialog.value = false
@@ -103,7 +102,7 @@ fun SettingsScreen(
             }
             if (openAppThemeDialog.value) {
                 AppThemeDialog(
-                    appTheme = themeState.theme,
+                    appTheme = settingsState.theme,
                     onDialogDismiss = { openAppThemeDialog.value = false },
                     onDialogConfirm = {
                         openAppThemeDialog.value = false
