@@ -74,6 +74,18 @@ fun ImageToWallpaperApp(
         ) {
             val context = LocalContext.current
             val imageUri by viewModel.imageUri.collectAsState()
+            val cropifyOption = remember {
+                mutableStateOf(
+                    CropifyOption(
+                        backgroundColor = Color.Transparent,
+                        frameAspectRatio = AspectRatio(
+                            settingsState.cropRatio.width,
+                            settingsState.cropRatio.height
+                        ),
+                        maskColor = Color.Transparent
+                    )
+                )
+            }
 
             val openDocumentLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.OpenDocument(),
@@ -108,9 +120,22 @@ fun ImageToWallpaperApp(
 
             ImageToWallpaperAppContent(
                 modifier = modifier,
-                settingsState = settingsState,
+                cropifyOption = cropifyOption.value,
                 imageUri = imageUri,
                 onSelectImageClick = onSelectImageClick,
+                onChangeCropRatio = {
+                    viewModel.setCropRatio(it)
+                    cropifyOption.value = cropifyOption.value.copy(
+                        frameAspectRatio = if (it == CropRatio.RATIO_CUSTOM) {
+                            null
+                        } else {
+                            AspectRatio(
+                                it.width,
+                                it.height
+                            )
+                        }
+                    )
+                },
                 onChangeAppTheme = { viewModel.setAppTheme(it) }
             )
         }
@@ -120,30 +145,20 @@ fun ImageToWallpaperApp(
 @Composable
 fun ImageToWallpaperAppContent(
     modifier: Modifier = Modifier,
-    settingsState: SettingsState = SettingsState(),
+    cropifyOption: CropifyOption = CropifyOption(),
     imageUri: Uri? = null,
     onSelectImageClick: () -> Unit = {},
+    onChangeCropRatio: (CropRatio) -> Unit = {},
     onChangeAppTheme: (AppTheme) -> Unit = {}
 ) {
     val context = LocalContext.current
     val cropifyState = rememberCropifyState()
-    val cropifyOption = remember {
-        mutableStateOf(
-            CropifyOption(
-                backgroundColor = Color.Transparent,
-                frameAspectRatio = AspectRatio(
-                    settingsState.cropRatio.width,
-                    settingsState.cropRatio.height
-                ),
-                maskColor = Color.Transparent
-            )
-        )
-    }
     var showBottomSheet by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
         BottomSheet(
             onDismiss = { showBottomSheet = false },
+            onChangeCropRatio = onChangeCropRatio,
             onChangeAppTheme = onChangeAppTheme
         )
     }
@@ -162,7 +177,6 @@ fun ImageToWallpaperAppContent(
                     .fillMaxSize()
             )
             {
-                val imageUri = imageUri
                 if (imageUri == null) {
                     Spacer(
                         modifier = modifier
@@ -173,7 +187,7 @@ fun ImageToWallpaperAppContent(
                     Cropify(
                         uri = imageUri,
                         state = cropifyState,
-                        option = cropifyOption.value,
+                        option = cropifyOption,
                         onImageCropped = {},
                         onFailedToLoadImage = {
                             Toast.makeText(
@@ -220,6 +234,7 @@ fun Menu(modifier: Modifier = Modifier, onSelectImageClick: () -> Unit) {
 fun BottomSheet(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
+    onChangeCropRatio: (CropRatio) -> Unit,
     onChangeAppTheme: (AppTheme) -> Unit
 ) {
     val bottomSheetState = rememberModalBottomSheetState()
@@ -229,7 +244,11 @@ fun BottomSheet(
         sheetState = bottomSheetState,
         dragHandle = { BottomSheetDefaults.DragHandle() }
     ) {
-        Options(modifier = modifier, onChangeAppTheme = onChangeAppTheme)
+        Options(
+            modifier = modifier,
+            onChangeCropRatio = onChangeCropRatio,
+            onChangeAppTheme = onChangeAppTheme
+        )
     }
 }
 
