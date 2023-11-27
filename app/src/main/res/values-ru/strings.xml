@@ -11,4 +11,10 @@
     <string name="err_activity_not_found">Не найдено приложение для обработки</string>
     <string name="err_permission_not_granted">Разрешение не предоставлено</string>
     <string name="err_load_image">Не удалось загрузить изображение</string>
+    <string name="wallpaper_success">Обои установлены успешно</string>
+    <string name="please_wait">Пожалуйста, подождите…</string>
+    <string name="as_both">Главный экран\nи экран блокировки</string>
+    <string name="as_home_screen">Главный экран</string>
+    <string name="as_lock_screen">Экран блокировки</string>
+    <string name="err_set_wallpaper">Не удалось установить обои</string>
 </resources>

@@ -12,9 +12,10 @@
     <string name="err_activity_not_found">No application found to handle intent</string>
     <string name="err_permission_not_granted">Permission not granted</string>
     <string name="err_load_image">Failed to load image</string>
-    <string name="err_set_wallpaper">Error with setting wallpaper</string>
+    <string name="err_set_wallpaper">Failed to setup wallpaper</string>
     <string name="wallpaper_success">Wallpaper set successfully!</string>
     <string name="as_home_screen">Home screen</string>
     <string name="as_lock_screen">Lock screen</string>
     <string name="as_both">Home screen\nand lock screen</string>
+    <string name="please_wait">Please wait…</string>
 </resources>
