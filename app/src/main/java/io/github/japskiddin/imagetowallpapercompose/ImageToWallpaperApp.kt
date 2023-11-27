@@ -57,6 +57,10 @@ import kotlinx.coroutines.withContext
 // https://developer.android.com/codelabs/basic-android-kotlin-compose-navigation?continue=https%3A%2F%2Fdeveloper.android.com%2Fcourses%2Fpathways%2Fandroid-basics-compose-unit-4-pathway-2%23codelab-https%3A%2F%2Fdeveloper.android.com%2Fcodelabs%2Fbasic-android-kotlin-compose-navigation#6
 // https://developer.android.com/codelabs/basic-android-kotlin-compose-viewmodel-and-state#7
 
+// TODO: добавить проверку наличия изображения перед стартом обрезки
+// TODO: обновить цвет в попап меню
+// TODO: поворот экрана?
+
 @Composable
 fun ImageToWallpaperApp(
     modifier: Modifier = Modifier,
@@ -151,7 +155,11 @@ fun ImageToWallpaperAppContent(
     Scaffold(
         topBar = {
             ToolBar(
-                onOptionsClick = { showBottomSheet = true },
+                onOptionsClick = {
+                    if (!isLoading) {
+                        showBottomSheet = true
+                    }
+                },
                 modifier = modifier
             )
         },
