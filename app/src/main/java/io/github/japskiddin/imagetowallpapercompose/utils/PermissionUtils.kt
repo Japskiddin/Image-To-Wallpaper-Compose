@@ -10,7 +10,7 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.app.ActivityCompat
 import io.github.japskiddin.imagetowallpapercompose.R
 
-fun hasPermission(context: Context): Boolean {
+fun hasStoragePermission(context: Context): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         ActivityCompat.checkSelfPermission(
             context,
@@ -26,7 +26,10 @@ fun hasPermission(context: Context): Boolean {
     }
 }
 
-fun requestPermission(context: Context, launcher: ManagedActivityResultLauncher<String, Boolean>) {
+fun requestStoragePermission(
+    context: Context,
+    launcher: ManagedActivityResultLauncher<String, Boolean>
+) {
     val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         Manifest.permission.READ_MEDIA_IMAGES
     } else {

@@ -48,9 +48,9 @@ import io.github.japskiddin.imagetowallpapercompose.ui.components.MenuButton
 import io.github.japskiddin.imagetowallpapercompose.ui.components.OptionItem
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 import io.github.japskiddin.imagetowallpapercompose.utils.PreviewWithTheme
-import io.github.japskiddin.imagetowallpapercompose.utils.hasPermission
+import io.github.japskiddin.imagetowallpapercompose.utils.hasStoragePermission
 import io.github.japskiddin.imagetowallpapercompose.utils.openFile
-import io.github.japskiddin.imagetowallpapercompose.utils.requestPermission
+import io.github.japskiddin.imagetowallpapercompose.utils.requestStoragePermission
 import io.moyuru.cropify.Cropify
 import io.moyuru.cropify.CropifyOption
 import io.moyuru.cropify.rememberCropifyState
@@ -101,10 +101,10 @@ fun ImageToWallpaperApp(
             )
 
             val onSelectImageClick = {
-                if (hasPermission(context)) {
+                if (hasStoragePermission(context)) {
                     openFile(context, openDocumentLauncher, getContentLauncher)
                 } else {
-                    requestPermission(context, requestPermissionLauncher)
+                    requestStoragePermission(context, requestPermissionLauncher)
                 }
             }
 

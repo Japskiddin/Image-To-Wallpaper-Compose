@@ -1,4 +1,4 @@
-package io.github.japskiddin.di
+package io.github.japskiddin.imagetowallpapercompose.di
 
 import android.content.Context
 import dagger.Module
