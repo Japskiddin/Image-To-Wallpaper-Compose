@@ -30,7 +30,7 @@ fun OptionItem(
     modifier: Modifier = Modifier,
     title: String,
     icon: Painter,
-    isSelected: Boolean = true,
+    isSelected: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     Column(
