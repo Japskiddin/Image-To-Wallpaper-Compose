@@ -222,7 +222,8 @@ fun BottomSheet(
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
         sheetState = bottomSheetState,
-        dragHandle = { BottomSheetDefaults.DragHandle() }
+        dragHandle = { BottomSheetDefaults.DragHandle() },
+        containerColor = MaterialTheme.colorScheme.background,
     ) {
         Options(
             modifier = modifier,

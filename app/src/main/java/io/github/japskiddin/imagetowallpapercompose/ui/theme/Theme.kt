@@ -19,19 +19,23 @@ import io.github.japskiddin.imagetowallpapercompose.AppTheme
 private val DarkColorScheme = darkColorScheme(
     primary = BlueEyes,
     background = Thunder,
-    surface = Color.Black,
+    surface = BalticSea,
+    surfaceVariant = CharcoalGrey,
     onPrimary = Color.White,
     onBackground = Color.White,
-    onSurface = Color.White
+    onSurface = Color.White,
+    onSurfaceVariant = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = BlueEyes,
     background = Iron,
-    surface = Color.White,
+    surface = Gainsboro,
+    surfaceVariant = Silver,
     onPrimary = Color.White,
     onBackground = Color.Black,
-    onSurface = Color.Black
+    onSurface = Color.Black,
+    onSurfaceVariant = Color.Black
 )
 
 @Composable
