@@ -1,6 +1,7 @@
 package io.github.japskiddin.imagetowallpapercompose
 
 import android.net.Uri
+import androidx.compose.ui.graphics.Color
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.japskiddin.imagetowallpapercompose.utils.DataStoreUtil
 import io.github.japskiddin.imagetowallpapercompose.utils.DataStoreUtil.Companion.KEY_CROP_RATIO
 import io.github.japskiddin.imagetowallpapercompose.utils.DataStoreUtil.Companion.KEY_THEME
+import io.moyuru.cropify.AspectRatio
+import io.moyuru.cropify.CropifyOption
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -55,11 +58,15 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
 
     private val _settingsState = MutableStateFlow(SettingsState())
     private val _imageUri = MutableStateFlow<Uri?>(null)
-    val imageUri: StateFlow<Uri?> = _imageUri
+    private val _cropifyOption = MutableStateFlow(
+        CropifyOption(backgroundColor = Color.Transparent)
+    )
     val settingsState: StateFlow<SettingsState> = _settingsState
+    val imageUri: StateFlow<Uri?> = _imageUri
+    val cropifyOption: StateFlow<CropifyOption> = _cropifyOption
 
     init {
-        getSettings()
+        fetchSettings()
     }
 
     fun setAppTheme(appTheme: AppTheme) {
@@ -81,6 +88,7 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
             _settingsState.update {
                 it.copy(cropRatio = cropRatio)
             }
+            setCropifyOptionRatio()
         }
     }
 
@@ -90,7 +98,30 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
         }
     }
 
-    private fun getSettings() {
+    fun setCropifyOptionBackground(color: Color) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _cropifyOption.update {
+                it.copy(maskColor = color)
+            }
+        }
+    }
+
+    private fun setCropifyOptionRatio() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val cropRatio = _settingsState.value.cropRatio
+            _cropifyOption.update {
+                it.copy(
+                    frameAspectRatio = if (cropRatio == CropRatio.RATIO_CUSTOM) {
+                        null
+                    } else {
+                        AspectRatio(cropRatio.width, cropRatio.height)
+                    }
+                )
+            }
+        }
+    }
+
+    private fun fetchSettings() {
         viewModelScope.launch(Dispatchers.IO) {
             dataStore.data.map { preferences ->
                 SettingsState(
@@ -103,6 +134,7 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
                 )
             }.collect {
                 _settingsState.value = it
+                setCropifyOptionRatio()
             }
         }
     }

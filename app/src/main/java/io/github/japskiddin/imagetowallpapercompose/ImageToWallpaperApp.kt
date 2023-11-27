@@ -38,7 +38,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -52,7 +51,6 @@ import io.github.japskiddin.imagetowallpapercompose.utils.PreviewWithTheme
 import io.github.japskiddin.imagetowallpapercompose.utils.hasPermission
 import io.github.japskiddin.imagetowallpapercompose.utils.openFile
 import io.github.japskiddin.imagetowallpapercompose.utils.requestPermission
-import io.moyuru.cropify.AspectRatio
 import io.moyuru.cropify.Cropify
 import io.moyuru.cropify.CropifyOption
 import io.moyuru.cropify.rememberCropifyState
@@ -68,24 +66,16 @@ fun ImageToWallpaperApp(
     val settingsState by viewModel.settingsState.collectAsState()
 
     ImageToWallpaperTheme(appTheme = settingsState.theme) {
+        val context = LocalContext.current
+        val backgroundColor = MaterialTheme.colorScheme.background
+        viewModel.setCropifyOptionBackground(backgroundColor)
+
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = backgroundColor
         ) {
-            val context = LocalContext.current
             val imageUri by viewModel.imageUri.collectAsState()
-            val cropifyOption = remember {
-                mutableStateOf(
-                    CropifyOption(
-                        backgroundColor = Color.Transparent,
-                        frameAspectRatio = AspectRatio(
-                            settingsState.cropRatio.width,
-                            settingsState.cropRatio.height
-                        ),
-                        maskColor = Color.Transparent
-                    )
-                )
-            }
+            val cropifyOption by viewModel.cropifyOption.collectAsState()
 
             val openDocumentLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.OpenDocument(),
@@ -120,21 +110,11 @@ fun ImageToWallpaperApp(
 
             ImageToWallpaperAppContent(
                 modifier = modifier,
-                cropifyOption = cropifyOption.value,
+                cropifyOption = cropifyOption,
                 imageUri = imageUri,
                 onSelectImageClick = onSelectImageClick,
                 onChangeCropRatio = {
                     viewModel.setCropRatio(it)
-                    cropifyOption.value = cropifyOption.value.copy(
-                        frameAspectRatio = if (it == CropRatio.RATIO_CUSTOM) {
-                            null
-                        } else {
-                            AspectRatio(
-                                it.width,
-                                it.height
-                            )
-                        }
-                    )
                 },
                 onChangeAppTheme = { viewModel.setAppTheme(it) }
             )
