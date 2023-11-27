@@ -5,6 +5,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.japskiddin.imagetowallpapercompose.ui.components.AppThemePicker
 import io.github.japskiddin.imagetowallpapercompose.ui.components.CropRatioPicker
+import io.github.japskiddin.imagetowallpapercompose.ui.components.Loading
 import io.github.japskiddin.imagetowallpapercompose.ui.components.Menu
 import io.github.japskiddin.imagetowallpapercompose.ui.components.ToolBar
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
@@ -133,6 +135,7 @@ fun ImageToWallpaperAppContent(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val cropifyState = rememberCropifyState()
+    var isLoading by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var wallpaperType by remember { mutableStateOf(WallpaperType.HOME) }
 
@@ -152,68 +155,76 @@ fun ImageToWallpaperAppContent(
                 modifier = modifier
             )
         },
-        content = {
-            Column(
+        content = { contentPadding ->
+            Box(
                 modifier = modifier
-                    .padding(it)
+                    .padding(contentPadding)
                     .fillMaxSize()
-            )
-            {
-                if (imageUri == null) {
-                    Spacer(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    )
-                } else {
-                    Cropify(
-                        uri = imageUri,
-                        state = cropifyState,
-                        option = cropifyOption,
-                        onImageCropped = { croppedBitmap ->
-                            coroutineScope.launch(Dispatchers.IO) {
-                                val result = updateWallpaper(
-                                    context,
-                                    croppedBitmap.asAndroidBitmap(),
-                                    wallpaperType
-                                )
-
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(
+            ) {
+                Column(modifier = modifier.fillMaxSize())
+                {
+                    if (imageUri == null) {
+                        Spacer(
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
+                    } else {
+                        Cropify(
+                            uri = imageUri,
+                            state = cropifyState,
+                            option = cropifyOption,
+                            onImageCropped = { croppedBitmap ->
+                                coroutineScope.launch(Dispatchers.IO) {
+                                    val result = updateWallpaper(
                                         context,
-                                        if (result) {
-                                            R.string.wallpaper_success
-                                        } else {
-                                            R.string.err_set_wallpaper
-                                        },
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                        croppedBitmap.asAndroidBitmap(),
+                                        wallpaperType
+                                    )
+
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(
+                                            context,
+                                            if (result) {
+                                                R.string.wallpaper_success
+                                            } else {
+                                                R.string.err_set_wallpaper
+                                            },
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        isLoading = false
+                                    }
                                 }
-                            }
-                        },
-                        onFailedToLoadImage = {
-                            Toast.makeText(
-                                context,
-                                R.string.err_load_image,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        },
+                            },
+                            onFailedToLoadImage = {
+                                Toast.makeText(
+                                    context,
+                                    R.string.err_load_image,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            },
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
+                    }
+
+                    Menu(
                         modifier = modifier
-                            .fillMaxWidth()
-                            .weight(1f)
+                            .align(Alignment.CenterHorizontally)
+                            .padding(bottom = 8.dp),
+                        onSelectImageClick = onSelectImageClick,
+                        onSetWallpaper = {
+                            isLoading = true
+                            wallpaperType = it
+                            cropifyState.crop()
+                        }
                     )
                 }
 
-                Menu(
-                    modifier = modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 8.dp),
-                    onSelectImageClick = onSelectImageClick,
-                    onSetWallpaper = {
-                        wallpaperType = it
-                        cropifyState.crop()
-                    }
-                )
+                if (isLoading) {
+                    Loading(modifier = modifier)
+                }
             }
         },
         modifier = modifier.fillMaxSize()
