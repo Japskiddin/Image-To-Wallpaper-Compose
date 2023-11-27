@@ -19,6 +19,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+enum class WallpaperType {
+    HOME,
+    LOCK,
+    BOTH
+}
+
 enum class CropRatio(val width: Int, val height: Int) {
     RATIO_4_TO_3(width = 4, height = 3),
     RATIO_3_TO_4(width = 3, height = 4),

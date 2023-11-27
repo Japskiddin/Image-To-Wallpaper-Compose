@@ -26,8 +26,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,9 +44,13 @@ import io.github.japskiddin.imagetowallpapercompose.utils.PreviewWithTheme
 import io.github.japskiddin.imagetowallpapercompose.utils.hasStoragePermission
 import io.github.japskiddin.imagetowallpapercompose.utils.openFile
 import io.github.japskiddin.imagetowallpapercompose.utils.requestStoragePermission
+import io.github.japskiddin.imagetowallpapercompose.utils.updateWallpaper
 import io.moyuru.cropify.Cropify
 import io.moyuru.cropify.CropifyOption
 import io.moyuru.cropify.rememberCropifyState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 // https://developer.android.com/codelabs/basic-android-kotlin-compose-navigation?continue=https%3A%2F%2Fdeveloper.android.com%2Fcourses%2Fpathways%2Fandroid-basics-compose-unit-4-pathway-2%23codelab-https%3A%2F%2Fdeveloper.android.com%2Fcodelabs%2Fbasic-android-kotlin-compose-navigation#6
 // https://developer.android.com/codelabs/basic-android-kotlin-compose-viewmodel-and-state#7
@@ -119,13 +126,15 @@ fun ImageToWallpaperAppContent(
     cropifyOption: CropifyOption = CropifyOption(),
     settingsState: SettingsState = SettingsState(),
     imageUri: Uri? = null,
-    onSelectImageClick: () -> Unit = {},
-    onChangeCropRatio: (CropRatio) -> Unit = {},
-    onChangeAppTheme: (AppTheme) -> Unit = {}
+    onSelectImageClick: () -> Unit,
+    onChangeCropRatio: (CropRatio) -> Unit,
+    onChangeAppTheme: (AppTheme) -> Unit
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val cropifyState = rememberCropifyState()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var wallpaperType by remember { mutableStateOf(WallpaperType.HOME) }
 
     if (showBottomSheet) {
         BottomSheet(
@@ -161,7 +170,27 @@ fun ImageToWallpaperAppContent(
                         uri = imageUri,
                         state = cropifyState,
                         option = cropifyOption,
-                        onImageCropped = {},
+                        onImageCropped = { croppedBitmap ->
+                            coroutineScope.launch(Dispatchers.IO) {
+                                val result = updateWallpaper(
+                                    context,
+                                    croppedBitmap.asAndroidBitmap(),
+                                    wallpaperType
+                                )
+
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        context,
+                                        if (result) {
+                                            R.string.wallpaper_success
+                                        } else {
+                                            R.string.err_set_wallpaper
+                                        },
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        },
                         onFailedToLoadImage = {
                             Toast.makeText(
                                 context,
@@ -176,8 +205,14 @@ fun ImageToWallpaperAppContent(
                 }
 
                 Menu(
-                    modifier = modifier.padding(bottom = 8.dp),
-                    onSelectImageClick = onSelectImageClick
+                    modifier = modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 8.dp),
+                    onSelectImageClick = onSelectImageClick,
+                    onSetWallpaper = {
+                        wallpaperType = it
+                        cropifyState.crop()
+                    }
                 )
             }
         },
@@ -236,6 +271,10 @@ fun BottomSheet(
 @Composable
 fun AppScreenPreview() {
     PreviewWithTheme {
-        ImageToWallpaperAppContent()
+        ImageToWallpaperAppContent(
+            onChangeCropRatio = {},
+            onChangeAppTheme = {},
+            onSelectImageClick = {}
+        )
     }
 }
