@@ -9,7 +9,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -27,8 +32,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import io.github.japskiddin.imagetowallpapercompose.ui.components.AppThemePicker
+import io.github.japskiddin.imagetowallpapercompose.ui.components.CropRatioPicker
 import io.github.japskiddin.imagetowallpapercompose.ui.components.Menu
-import io.github.japskiddin.imagetowallpapercompose.ui.components.Options
 import io.github.japskiddin.imagetowallpapercompose.ui.components.ToolBar
 import io.github.japskiddin.imagetowallpapercompose.ui.theme.ImageToWallpaperTheme
 import io.github.japskiddin.imagetowallpapercompose.utils.PreviewWithTheme
@@ -96,6 +102,7 @@ fun ImageToWallpaperApp(
                 modifier = modifier,
                 cropifyOption = cropifyOption,
                 imageUri = imageUri,
+                settingsState = settingsState,
                 onSelectImageClick = onSelectImageClick,
                 onChangeCropRatio = {
                     viewModel.setCropRatio(it)
@@ -110,6 +117,7 @@ fun ImageToWallpaperApp(
 fun ImageToWallpaperAppContent(
     modifier: Modifier = Modifier,
     cropifyOption: CropifyOption = CropifyOption(),
+    settingsState: SettingsState = SettingsState(),
     imageUri: Uri? = null,
     onSelectImageClick: () -> Unit = {},
     onChangeCropRatio: (CropRatio) -> Unit = {},
@@ -122,6 +130,7 @@ fun ImageToWallpaperAppContent(
     if (showBottomSheet) {
         BottomSheet(
             onDismiss = { showBottomSheet = false },
+            settingsState = settingsState,
             onChangeCropRatio = onChangeCropRatio,
             onChangeAppTheme = onChangeAppTheme
         )
@@ -179,6 +188,7 @@ fun ImageToWallpaperAppContent(
 @Composable
 fun BottomSheet(
     modifier: Modifier = Modifier,
+    settingsState: SettingsState,
     onDismiss: () -> Unit,
     onChangeCropRatio: (CropRatio) -> Unit,
     onChangeAppTheme: (AppTheme) -> Unit
@@ -191,11 +201,26 @@ fun BottomSheet(
         dragHandle = { BottomSheetDefaults.DragHandle() },
         containerColor = MaterialTheme.colorScheme.background,
     ) {
-        Options(
-            modifier = modifier,
-            onChangeCropRatio = onChangeCropRatio,
-            onChangeAppTheme = onChangeAppTheme
-        )
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(top = 16.dp, bottom = 16.dp, start = 14.dp, end = 14.dp)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            AppThemePicker(
+                modifier = modifier,
+                settingsState = settingsState,
+                onChangeAppTheme = onChangeAppTheme
+            )
+            Spacer(modifier = modifier.height(16.dp))
+            CropRatioPicker(
+                modifier = modifier,
+                settingsState = settingsState,
+                onChangeCropRatio = onChangeCropRatio
+            )
+        }
     }
 }
 
