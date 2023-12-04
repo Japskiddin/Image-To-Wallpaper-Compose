@@ -111,7 +111,7 @@ fun ImageToWallpaperApp(
                 }
             }
 
-            ImageToWallpaperAppContent(
+            ImageToWallpaperContent(
                 modifier = modifier,
                 cropifyOption = cropifyOption,
                 imageUri = imageUri,
@@ -127,11 +127,11 @@ fun ImageToWallpaperApp(
 }
 
 @Composable
-fun ImageToWallpaperAppContent(
+fun ImageToWallpaperContent(
     modifier: Modifier = Modifier,
-    cropifyOption: CropifyOption = CropifyOption(),
-    settingsState: SettingsState = SettingsState(),
-    imageUri: Uri? = null,
+    cropifyOption: CropifyOption,
+    settingsState: SettingsState,
+    imageUri: Uri?,
     onSelectImageClick: () -> Unit,
     onChangeCropRatio: (CropRatio) -> Unit,
     onChangeAppTheme: (AppTheme) -> Unit
@@ -288,12 +288,15 @@ fun BottomSheet(
     showBackground = true
 )
 @Composable
-fun AppScreenPreview() {
+fun ImageToWallpaperContentPreview() {
     PreviewWithTheme {
-        ImageToWallpaperAppContent(
+        ImageToWallpaperContent(
             onChangeCropRatio = {},
             onChangeAppTheme = {},
-            onSelectImageClick = {}
+            onSelectImageClick = {},
+            cropifyOption = CropifyOption(),
+            settingsState = SettingsState(),
+            imageUri = null
         )
     }
 }

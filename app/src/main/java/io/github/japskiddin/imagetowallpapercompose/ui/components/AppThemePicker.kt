@@ -31,8 +31,8 @@ import io.github.japskiddin.imagetowallpapercompose.SettingsState
 @Composable
 fun AppThemePicker(
     modifier: Modifier = Modifier,
-    settingsState: SettingsState = SettingsState(),
-    onChangeAppTheme: (AppTheme) -> Unit = {}
+    settingsState: SettingsState,
+    onChangeAppTheme: (AppTheme) -> Unit
 ) {
     val appThemes = AppTheme.entries.toTypedArray()
 
@@ -73,7 +73,7 @@ private fun OptionItem(
     title: String,
     icon: Painter,
     isSelected: Boolean = false,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit
 ) {
     Column(
         modifier = modifier

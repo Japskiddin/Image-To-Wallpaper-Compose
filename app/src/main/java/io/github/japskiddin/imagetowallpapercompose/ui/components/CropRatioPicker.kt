@@ -31,8 +31,8 @@ import io.github.japskiddin.imagetowallpapercompose.SettingsState
 @Composable
 fun CropRatioPicker(
     modifier: Modifier = Modifier,
-    settingsState: SettingsState = SettingsState(),
-    onChangeCropRatio: (CropRatio) -> Unit = {}
+    settingsState: SettingsState,
+    onChangeCropRatio: (CropRatio) -> Unit
 ) {
     val cropRations = CropRatio.entries.toTypedArray()
 
@@ -68,7 +68,7 @@ private fun OptionItem(
     title: String,
     cropRatio: CropRatio,
     isSelected: Boolean = false,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit
 ) {
     Column(
         modifier = modifier

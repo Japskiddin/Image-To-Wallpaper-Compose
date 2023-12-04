@@ -131,7 +131,11 @@ fun PopupMenu(
 }
 
 @Composable
-fun MenuButton(icon: Int, desc: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun MenuButton(
+    icon: Int, desc: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     IconButton(
         onClick = { onClick() },
         modifier = modifier
