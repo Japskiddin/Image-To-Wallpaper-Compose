@@ -17,4 +17,5 @@
     <string name="as_home_screen">Главный экран</string>
     <string name="as_lock_screen">Экран блокировки</string>
     <string name="err_set_wallpaper">Не удалось установить обои</string>
+    <string name="err_empty_image">Пожалуйста, выберите изображение</string>
 </resources>

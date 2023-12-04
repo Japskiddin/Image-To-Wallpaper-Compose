@@ -18,4 +18,5 @@
     <string name="as_lock_screen">Lock screen</string>
     <string name="as_both">Home screen\nand lock screen</string>
     <string name="please_wait">Please wait…</string>
+    <string name="err_empty_image">Please set image</string>
 </resources>

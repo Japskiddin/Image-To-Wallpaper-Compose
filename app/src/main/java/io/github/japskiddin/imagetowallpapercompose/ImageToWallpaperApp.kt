@@ -60,6 +60,7 @@ import kotlinx.coroutines.withContext
 // TODO: добавить проверку наличия изображения перед стартом обрезки
 // TODO: обновить цвет в попап меню
 // TODO: поворот экрана?
+// TODO: добавить edge-to-edge https://habr.com/ru/companies/kts/articles/687310/#1
 
 @Composable
 fun ImageToWallpaperApp(
@@ -103,24 +104,20 @@ fun ImageToWallpaperApp(
                 }
             )
 
-            val onSelectImageClick = {
-                if (hasStoragePermission(context)) {
-                    openFile(context, openDocumentLauncher, getContentLauncher)
-                } else {
-                    requestStoragePermission(context, requestPermissionLauncher)
-                }
-            }
-
             ImageToWallpaperContent(
                 modifier = modifier,
                 cropifyOption = cropifyOption,
                 imageUri = imageUri,
                 settingsState = settingsState,
-                onSelectImageClick = onSelectImageClick,
-                onChangeCropRatio = {
-                    viewModel.setCropRatio(it)
+                onSelectImageClick = {
+                    if (hasStoragePermission(context)) {
+                        openFile(context, openDocumentLauncher, getContentLauncher)
+                    } else {
+                        requestStoragePermission(context, requestPermissionLauncher)
+                    }
                 },
-                onChangeAppTheme = { viewModel.setAppTheme(it) }
+                onChangeCropRatio = { cropRatio -> viewModel.setCropRatio(cropRatio) },
+                onChangeAppTheme = { appTheme -> viewModel.setAppTheme(appTheme) }
             )
         }
     }
@@ -223,9 +220,17 @@ fun ImageToWallpaperContent(
                             .padding(bottom = 8.dp),
                         onSelectImageClick = onSelectImageClick,
                         onSetWallpaper = {
-                            isLoading = true
-                            wallpaperType = it
-                            cropifyState.crop()
+                            if (imageUri == null) {
+                                Toast.makeText(
+                                    context,
+                                    R.string.err_empty_image,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                isLoading = true
+                                wallpaperType = it
+                                cropifyState.crop()
+                            }
                         }
                     )
                 }
