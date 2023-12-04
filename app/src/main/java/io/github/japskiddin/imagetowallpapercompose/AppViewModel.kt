@@ -67,6 +67,7 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
     private val _cropifyOption = MutableStateFlow(
         CropifyOption(backgroundColor = Color.Transparent)
     )
+
     val settingsState: StateFlow<SettingsState> = _settingsState
     val imageUri: StateFlow<Uri?> = _imageUri
     val cropifyOption: StateFlow<CropifyOption> = _cropifyOption
@@ -76,6 +77,7 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
     }
 
     fun setAppTheme(appTheme: AppTheme) {
+        if (appTheme == _settingsState.value.theme) return
         viewModelScope.launch(Dispatchers.IO) {
             dataStore.edit { preferences ->
                 preferences[KEY_THEME] = appTheme.ordinal
@@ -87,6 +89,7 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
     }
 
     fun setCropRatio(cropRatio: CropRatio) {
+        if (cropRatio == _settingsState.value.cropRatio) return
         viewModelScope.launch(Dispatchers.IO) {
             dataStore.edit { preferences ->
                 preferences[KEY_CROP_RATIO] = cropRatio.ordinal
@@ -105,6 +108,7 @@ class AppViewModel @Inject constructor(dataStoreUtil: DataStoreUtil) : ViewModel
     }
 
     fun setCropifyOptionBackground(color: Color) {
+        if (color == _cropifyOption.value.maskColor) return
         viewModelScope.launch(Dispatchers.IO) {
             _cropifyOption.update {
                 it.copy(maskColor = color)
